@@ -1,0 +1,26 @@
+{
+    "pageContent" : [
+        {
+            "text" : "Conceptos Básicos",
+            "contentId" : "basics",
+            "content" : [
+                {
+                    "text" : "Introducción",
+                    "content" : "docker.paths.conceptos-basicos.introduccion"
+                }
+            ]
+                
+        },
+        {
+            "text" : "Conceptos Principales",
+            "contentId" : "basics",
+            "content" : [
+                {
+                    "text" : "Introducción",
+                    "content" : "docker.paths.conceptos-principales.introduccion"
+                }
+            ]
+                
+        }
+    ]
+}

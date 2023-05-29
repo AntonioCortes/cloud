@@ -1,0 +1,62 @@
+{
+    "pageContent" : [
+        {
+            "text" : "Conceptos Básicos",
+            "contentId" : "basics",
+            "content" : [
+                {
+                    "text" : "Introducción",
+                    "content" : "jenkins.paths.introduccion"
+                }
+            ]
+        },
+        {
+            "text" : "Conceptos Principales",
+            "contentId" : "main",
+            "content" : [
+                {
+                    "text" : "content1",
+                    "contentId":"content1",
+                    "content" : [
+                        {
+                            "text" : "option1",
+                            "content" : "jenkins.paths.content1.opt1"
+                        },
+                        {
+                             "text" : "option2",
+                            "content" : "jenkins.paths.content1.opt2"
+                        },
+                        {
+                            "text" : "option3",
+                            "content" : "jenkins.paths.content1.opt3"
+                        }
+                    ]
+                },
+                {
+                    "text" : "content2",
+                    "contentId":"content2",
+                    "content" : [
+                        {
+                            "text" : "opt1",
+                            "content" : "jenkins.paths.content2.opt1"
+                        },
+                        {
+                             "text" : "opt2",
+                            "content" : "jenkins.paths.content2.opt2"
+                        }
+                    ]
+                },
+                {
+                    "text" : "content3",
+                    "content" : "jenkins.paths.content3"
+                }
+            ]
+        }
+    ],
+    "links" : [
+        {
+            "text" : "***",
+            "href" : ""
+        }
+    ]
+}

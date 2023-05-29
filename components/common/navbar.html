@@ -1,0 +1,26 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+                
+        <div class="brand-container">
+            <button type="button" id="sidebarCollapse" class="btn" onclick="toggleSidebar()">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <img id="logo" height="40px">
+            
+            <a id="nav-topic" class="navbar-brand" href="#"></a>
+        </div>
+        
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div id="navbar-navlinks" class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#" onclick="changeView('jenkins')">Jenkins</a>
+                <a class="nav-link active" aria-current="page" href="#" onclick="changeView('docker')">Docker</a>
+            </div>
+        </div>
+        <div class="tools-container">
+            <div onclick="changeTheme()" id="themeButton" status="light-theme">
+                <img src="assets/vendor/bootstrap-icons/1.7.0/circle-half.svg">
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,32 @@
+{
+    "common" : {
+        "paths" : {
+            "navbar" : "components/common/navbar.html",
+            "sidebar" : "components/common/sidebar.html"
+        }
+    },
+    "jenkins" : {
+        "topic" : "Jenkins",
+        "mainContent" : "introduccion",
+        "paths" : {
+            "logo" : "components/jenkins/common/assets/img/jenkins-logo.png",
+            "sidebar" : "components/jenkins/common/assets/sidebar.json",
+            "introduccion" : {
+                "basePath" : "components/jenkins/introduccion",
+                "html" : "introduccion.html"   
+            }
+        }
+    },
+    "docker" : {
+        "topic" : "Docker",
+        "mainContent" : "introduccion",
+        "paths" : {
+            "logo" : "components/docker/common/assets/img/docker-logo.png",
+            "sidebar" : "components/docker/common/assets/sidebar.json",
+            "introduccion" : {
+                "basePath" : "components/docker/introduccion",
+                "html" : "introduccion.html"   
+            }
+        }
+    }
+}
