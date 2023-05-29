@@ -1,15 +1,15 @@
 <h1 class="title">Introducción a Jenkins</h1>
 
 <p>Es un servidor de automatización, que permite desplegar proyectos fácilmente.</p>
-
+<p>Está programado en java y por lo tanto el sistema necesita java para ejecutarlo</p>
 <p>Permite la instalación de plugins.</p>
 
 <h2>Instalación y bootstrap junto a docker y java 11:</h2>
 
 <ul>
     <li>Instalación de Java 11, variable de entorno home y actualización de PATH</li>
-    <li>Instalar Docker desktop</li>
     <li>Instalar Jenkins</li>
+    <li>Instalar Docker desktop(Opcional)</li>
     <li>Instalar Chocolatey(Opcional)</li>
 </ul>
 
@@ -21,26 +21,103 @@
 <p>Se puede instalar jenkins desde un documento con extensión <b>.msi</b> en Windows o ejecutar el documento con extensión <b>.war</b> con java mediante comandos.</p>
 
 <div class="center-horizontal">
-    <img src="components\jenkins\introduccion\assets\capt_2.png">
-</div>
-
-<div class="center-horizontal">
 <pre><code class="language-bash hljs">
 #Comando para ejecutar jenkins
 java -jar jenkins.war httpPort=8080
 </code></pre>
 </div>
 
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_2.png">
+</div>
+
 <h2>Crear un Job y Enlazar con un repositorio</h2>
+
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_3.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_4.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_5.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_6.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_7.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_8.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_9.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_10.png">
+</div>
+
+
+
+
 
 
 
 <h2>Schedule and remote jobs</h2>
+<p>Para programar tareas se utiliza un <b>Cron</b></p>
 
-<h2>Crear un Cron</h2>
-<p><b>NOTA:</b> Un cron es...</p>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_11.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_12.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_13.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_14.png">
+</div>
 
+
+<h2>Cron</h2>
+<p>Un <b>Cron</b> en Unix es un administrador regular de procesos en segundo plano (demonio) que ejecuta procesos o guiones a intervalos regulares</p>
+<p><a href="http://www.cronmaker.com/" target="_blank">http://www.cronmaker.com/</a></p>
 
 <h2>Parametrized Builds</h2>
 
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_15.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_16.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_17.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_18.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_19.png">
+</div>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_20.png">
+</div>
+
+<p><b>NOTA:</b> Los parámetros pueden ser de tipo:</p>
+<ul>
+    <li><b>String, Multi-line String</b></li>
+    <li><b>boolean</b></li>
+    <li><b>password</b></li>
+    <li><b>file</b></li>
+    <li><b>credential</b></li>
+    <li><b>run</b></li>
+    <li><b>file</b></li>
+</ul>
+
+
 <h2>Plugin: Autorización para las builds</h2>
+
+<h2>Setup Postbuild and email notifications</h2>
