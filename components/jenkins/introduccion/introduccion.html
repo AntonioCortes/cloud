@@ -31,14 +31,16 @@ java -jar jenkins.war httpPort=8080
     <img src="components\jenkins\introduccion\assets\capt_2.png">
 </div>
 
-<h2>Crear un Job y Enlazar con un repositorio</h2>
-
 <div class="center-horizontal">
     <img src="components\jenkins\introduccion\assets\capt_3.png">
 </div>
+
 <div class="center-horizontal">
     <img src="components\jenkins\introduccion\assets\capt_4.png">
 </div>
+
+<h2>Crear un Job y Enlazar con un repositorio</h2>
+
 <div class="center-horizontal">
     <img src="components\jenkins\introduccion\assets\capt_5.png">
 </div>
@@ -120,4 +122,60 @@ java -jar jenkins.war httpPort=8080
 
 <h2>Plugin: Autorización para las builds</h2>
 
+<ol>
+    <li>Instalar el plugin <b>Role-based Authorization Strategy</b></li>
+    
+    <li>Debe haber usuarios</li>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_21.png">
+    </div>
+    
+    <li>Habilitar en <b>configuración global de seguridad</b> la <b>estrategia de autorización basada en roles</b></li>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_22.png">
+    </div>
+    
+    <li>Para gestionar los permisos y roles se utiliza la opción en:</li>
+    <p class="center-horizontal"><em><b>Manage Jenkins &gt; Security &gt; Manage and Assign Roles &gt; Manage Roles</b></em></p>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_23.png">
+    </div>
+    
+    <li>Añadir los roles y configurar los permisos:</li>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_24.png">
+    </div>
+
+    <li>Asignar los roles a los usuarios:</li>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_25.png">
+    </div>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_26.png">
+    </div>
+    <div class="center-horizontal">
+        <img src="components\jenkins\introduccion\assets\capt_27.png">
+    </div>
+</ol>
+
+
+
+
+
 <h2>Setup Postbuild and email notifications</h2>
+
+<p>Jenkins permite el envío de notificaciones a traves de email:</p>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_28.png">
+</div>
+<p>Al final de una tarea de jenkins se puede configurar el envio de notificación añadiendo una <b>Post-build Action</b>:</p>
+<div class="center-horizontal">
+    <img src="components\jenkins\introduccion\assets\capt_29.png">
+</div>
+
+
+<h2>Pipelines</h2>
+
+<h2>Pipeline example</h2>
+
+<h2>Jenkinsfile (Scripted Pipeline)</h2>
