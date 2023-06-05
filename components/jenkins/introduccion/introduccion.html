@@ -1,6 +1,7 @@
 <h1 class="title">Introducción a Jenkins</h1>
 
 <p>Es un servidor de automatización, que permite desplegar proyectos fácilmente.</p>
+<p>Herramienta para CI/CD (Continuous integration, delivery, deployment.)</p>
 <p>Está programado en java y por lo tanto el sistema necesita java para ejecutarlo</p>
 <p>Permite la instalación de plugins.</p>
 
@@ -67,7 +68,8 @@ java -jar jenkins.war httpPort=8080
 
 
 <h2>Schedule and remote jobs</h2>
-<p>Para programar tareas se utiliza un <b>Cron</b></p>
+<a href="https://qaautomation.expert/2022/12/05/how-to-schedule-a-jenkins-job/">https://qaautomation.expert/2022/12/05/how-to-schedule-a-jenkins-job/</a>
+<p>Para programar tareas(jobs) en función de un evento o <b>Trigger</b> se puede utiliza un <b>Cron</b>, el cual, puede definir la periodicidad con la que se ejecutará dicha tarea. Existen otros eventos por los cuales se puede ejecutar una tarea, como por ejemplo, un commit nuevo que de paso a la ejecución de una nueva construcción(build) en maven.</p>
 
 <div class="center-horizontal">
     <img src="components\jenkins\introduccion\assets\capt_11.png">
@@ -179,3 +181,5 @@ java -jar jenkins.war httpPort=8080
 <h2>Pipeline example</h2>
 
 <h2>Jenkinsfile (Scripted Pipeline)</h2>
+
+<a href="https://www.jenkins.io/doc/book/pipeline/">https://www.jenkins.io/doc/book/pipeline/</a>
