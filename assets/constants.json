@@ -28,5 +28,17 @@
                 "html" : "introduccion.html"   
             }
         }
+    },
+    "k8s" : {
+        "topic" : "Kubernetes",
+        "mainContent" : "introduccion",
+        "paths" : {
+            "logo" : "components/k8s/common/assets/img/k8s-logo.png",
+            "sidebar" : "components/k8s/common/assets/sidebar.json",
+            "introduccion" : {
+                "basePath" : "components/k8s/introduccion",
+                "html" : "introduccion.html"   
+            }
+        }
     }
 }
