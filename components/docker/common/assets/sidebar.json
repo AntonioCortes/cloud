@@ -16,7 +16,41 @@
             "contentId" : "basics",
             "content" : [
                 {
-                    "text" : "Introducción",
+                    "text" : "Orquestación",
+                    "content" : "docker.paths.conceptos-principales.introduccion"
+                },
+                {
+                    "text" : "Imágenes",
+                    "contentId":"content2",
+                    "content" : [
+                        {
+                            "text" : "Creación",
+                            "content" : "k8s.paths.content2.opt1"
+                        },
+                        {
+                             "text" : "Gestión",
+                            "content" : "k8s.paths.content2.opt2"
+                        },
+                        {
+                             "text" : "Registro",
+                            "content" : "k8s.paths.content2.opt2"
+                        }
+                    ]
+                },
+                {
+                    "text" : "Instalación y Configuración",
+                    "content" : "docker.paths.conceptos-principales.introduccion"
+                },
+                {
+                    "text" : "Networking",
+                    "content" : "docker.paths.conceptos-principales.introduccion"
+                },
+                {
+                    "text" : "Seguridad",
+                    "content" : "docker.paths.conceptos-principales.introduccion"
+                },
+                {
+                    "text" : "Almacenamiento y volúmenes",
                     "content" : "docker.paths.conceptos-principales.introduccion"
                 }
             ]

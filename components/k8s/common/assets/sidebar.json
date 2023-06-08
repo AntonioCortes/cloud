@@ -15,8 +15,8 @@
             "contentId" : "main",
             "content" : [
                 {
-                    "text" : "content1",
-                    "contentId":"content1",
+                    "text" : "Servicios",
+                    "contentId":"servicios",
                     "content" : [
                         {
                             "text" : "option1",
@@ -33,7 +33,7 @@
                     ]
                 },
                 {
-                    "text" : "content2",
+                    "text" : "Minikube",
                     "contentId":"content2",
                     "content" : [
                         {
@@ -47,7 +47,15 @@
                     ]
                 },
                 {
-                    "text" : "content3",
+                    "text" : "Pods",
+                    "content" : "k8s.paths.content3"
+                },
+                {
+                    "text" : "Tareas",
+                    "content" : "k8s.paths.content3"
+                },
+                {
+                    "text" : "Despliegues",
                     "content" : "k8s.paths.content3"
                 }
             ]
