@@ -40,5 +40,29 @@
                 "html" : "introduccion.html"   
             }
         }
+    },
+    "kafka" : {
+        "topic" : "Kafka",
+        "mainContent" : "introduccion",
+        "paths" : {
+            "logo" : "components/kafka/common/assets/img/kafka-logo-dark.jpeg",
+            "sidebar" : "components/kafka/common/assets/sidebar.json",
+            "introduccion" : {
+                "basePath" : "components/kafka/introduccion",
+                "html" : "introduccion.html"   
+            }
+        }
+    },
+    "rabbitmq" : {
+        "topic" : "RabbitMQ",
+        "mainContent" : "introduccion",
+        "paths" : {
+            "logo" : "components/rabbitmq/common/assets/img/rabbitmq-logo.png",
+            "sidebar" : "components/rabbitmq/common/assets/sidebar.json",
+            "introduccion" : {
+                "basePath" : "components/rabbitmq/introduccion",
+                "html" : "introduccion.html"   
+            }
+        }
     }
 }

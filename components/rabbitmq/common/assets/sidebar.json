@@ -1,0 +1,70 @@
+{
+    "pageContent" : [
+        {
+            "text" : "Conceptos Básicos",
+            "contentId" : "basics",
+            "content" : [
+                {
+                    "text" : "Introducción",
+                    "content" : "k8s.paths.introduccion"
+                }
+            ]
+        },
+        {
+            "text" : "Conceptos Principales",
+            "contentId" : "main",
+            "content" : [
+                {
+                    "text" : "Servicios",
+                    "contentId":"servicios",
+                    "content" : [
+                        {
+                            "text" : "option1",
+                            "content" : "k8s.paths.content1.opt1"
+                        },
+                        {
+                             "text" : "option2",
+                            "content" : "k8s.paths.content1.opt2"
+                        },
+                        {
+                            "text" : "option3",
+                            "content" : "k8s.paths.content1.opt3"
+                        }
+                    ]
+                },
+                {
+                    "text" : "Minikube",
+                    "contentId":"content2",
+                    "content" : [
+                        {
+                            "text" : "opt1",
+                            "content" : "k8s.paths.content2.opt1"
+                        },
+                        {
+                             "text" : "opt2",
+                            "content" : "k8s.paths.content2.opt2"
+                        }
+                    ]
+                },
+                {
+                    "text" : "Pods",
+                    "content" : "k8s.paths.content3"
+                },
+                {
+                    "text" : "Tareas",
+                    "content" : "k8s.paths.content3"
+                },
+                {
+                    "text" : "Despliegues",
+                    "content" : "k8s.paths.content3"
+                }
+            ]
+        }
+    ],
+    "links" : [
+        {
+            "text" : "***",
+            "href" : ""
+        }
+    ]
+}
