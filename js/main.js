@@ -1,5 +1,5 @@
 let constants = null;
-const mainView = 'jenkins';
+const mainView = 'docker';
 
 $(document).ready(function () 
 {

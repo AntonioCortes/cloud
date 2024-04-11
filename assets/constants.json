@@ -27,6 +27,10 @@
                 "basePath" : "components/docker/introduccion",
                 "html" : "introduccion.html"   
             },
+            "contenedores" : {
+                "basePath" : "components/docker/contenedores",
+                "html" : "contenedores.html"   
+            },
             "orquestacion" : {
                 "basePath" : "components/docker/orquestacion",
                 "html" : "orquestacion.html"   

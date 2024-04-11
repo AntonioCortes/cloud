@@ -7,6 +7,10 @@
                 {
                     "text" : "Introducción",
                     "content" : "docker.paths.introduccion"
+                },
+                {
+                    "text" : "Instalación y Configuración",
+                    "content" : "docker.paths.instalacionConfiguracion"
                 }
             ]
                 
@@ -16,8 +20,8 @@
             "contentId" : "basics",
             "content" : [
                 {
-                    "text" : "Orquestación",
-                    "content" : "docker.paths.orquestacion"
+                    "text" : "Contenedores",
+                    "content" : "docker.paths.contenedores"
                 },
                 {
                     "text" : "Imágenes",
@@ -38,8 +42,12 @@
                     ]
                 },
                 {
-                    "text" : "Instalación y Configuración",
-                    "content" : "docker.paths.instalacionConfiguracion"
+                    "text" : "Almacenamiento y volúmenes",
+                    "content" : "docker.paths.almacenamientoVolumenes"
+                },
+                {
+                    "text" : "Orquestación",
+                    "content" : "docker.paths.orquestacion"
                 },
                 {
                     "text" : "Networking",
@@ -48,10 +56,6 @@
                 {
                     "text" : "Seguridad",
                     "content" : "docker.paths.seguridad"
-                },
-                {
-                    "text" : "Almacenamiento y volúmenes",
-                    "content" : "docker.paths.almacenamientoVolumenes"
                 }
             ]
                 
