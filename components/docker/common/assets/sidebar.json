@@ -6,7 +6,7 @@
             "content" : [
                 {
                     "text" : "Introducción",
-                    "content" : "docker.paths.conceptos-basicos.introduccion"
+                    "content" : "docker.paths.introduccion"
                 }
             ]
                 
@@ -17,41 +17,41 @@
             "content" : [
                 {
                     "text" : "Orquestación",
-                    "content" : "docker.paths.conceptos-principales.introduccion"
+                    "content" : "docker.paths.orquestacion"
                 },
                 {
                     "text" : "Imágenes",
-                    "contentId":"content2",
+                    "contentId":"imagenes",
                     "content" : [
                         {
                             "text" : "Creación",
-                            "content" : "k8s.paths.content2.opt1"
+                            "content" : "docker.paths.imagenes.creacion"
                         },
                         {
                              "text" : "Gestión",
-                            "content" : "k8s.paths.content2.opt2"
+                            "content" : "docker.paths.imagenes.gestion"
                         },
                         {
                              "text" : "Registro",
-                            "content" : "k8s.paths.content2.opt2"
+                            "content" : "docker.paths.imagenes.registro"
                         }
                     ]
                 },
                 {
                     "text" : "Instalación y Configuración",
-                    "content" : "docker.paths.conceptos-principales.introduccion"
+                    "content" : "docker.paths.instalacionConfiguracion"
                 },
                 {
                     "text" : "Networking",
-                    "content" : "docker.paths.conceptos-principales.introduccion"
+                    "content" : "docker.paths.networking"
                 },
                 {
                     "text" : "Seguridad",
-                    "content" : "docker.paths.conceptos-principales.introduccion"
+                    "content" : "docker.paths.seguridad"
                 },
                 {
                     "text" : "Almacenamiento y volúmenes",
-                    "content" : "docker.paths.conceptos-principales.introduccion"
+                    "content" : "docker.paths.almacenamientoVolumenes"
                 }
             ]
                 

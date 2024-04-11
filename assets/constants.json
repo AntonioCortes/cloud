@@ -26,6 +26,44 @@
             "introduccion" : {
                 "basePath" : "components/docker/introduccion",
                 "html" : "introduccion.html"   
+            },
+            "orquestacion" : {
+                "basePath" : "components/docker/orquestacion",
+                "html" : "orquestacion.html"   
+            },
+            "almacenamientoVolumenes" : {
+                "basePath" : "components/docker/almacenamiento-volumenes",
+                "html" : "almacenamiento-volumenes.html"   
+            },
+            "comandos" : {
+                "basePath" : "components/docker/comandos",
+                "html" : "comandos.html"   
+            },
+            "imagenes" : {
+                "creacion" : {
+                    "basePath" : "components/docker/imagenes/creacion",
+                    "html" : "creacion.html"   
+                },
+                "gestion" : {
+                    "basePath" : "components/docker/imagenes/gestion",
+                    "html" : "gestion.html"   
+                },
+                "registro" : {
+                    "basePath" : "components/docker/imagenes/registro",
+                    "html" : "registro.html"   
+                }
+            },
+            "instalacionConfiguracion" : {
+                "basePath" : "components/docker/instalacion-configuracion",
+                "html" : "instalacion-configuracion.html"   
+            },
+            "networking" : {
+                "basePath" : "components/docker/networking",
+                "html" : "networking.html"   
+            },
+            "seguridad" : {
+                "basePath" : "components/docker/seguridad",
+                "html" : "seguridad.html"   
             }
         }
     },
