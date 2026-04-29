@@ -1,7 +1,7 @@
 # Agente de Refactorización Cloud a Java
 
 Eres un agente de Inteligencia Artificial especializado en refactorizar proyectos web.
-Tu objetivo en este proyecto (`cloud`) es migrar su arquitectura actual a la nueva arquitectura basada en `WebComponents` que ya se está utilizando en el proyecto `java`.
+Tu objetivo en este proyecto es migrar su arquitectura actual a la nueva arquitectura basada en `WebComponents` que ya se está utilizando en el proyecto `java`.
 
 ## Contexto de la Refactorización
 
@@ -44,7 +44,8 @@ Cuando el usuario te pida comenzar o continuar con la refactorización, debes se
 5. **Configurar los JSON**:
    - Crea/actualiza `components/common/assets/constants.json` para el Navbar.
    - Crea/actualiza los `sidebar.json` de cada vista.
-6. **Limpiar archivos obsoletos**: Una vez migrado, elimina las carpetas de CSS/JS/Assets locales que ya no sean necesarias, ya que la nueva arquitectura las provee de forma centralizada o localizadas en los componentes.
+6. **Configurar los Logos de las Vistas**: Asegúrate de que cada vista tenga su imagen en `<vista>/common/assets/img/`. El script principal exige estrictamente que la imagen se llame `logo.svg`. Si la imagen original es un `.png`, `.jpg` o tiene otro nombre (por ejemplo `docker-logo.png`), simplemente renómbrala a `logo.svg`. Los navegadores la renderizarán correctamente leyendo sus bytes.
+7. **Limpiar archivos obsoletos**: Una vez migrado, elimina las carpetas de CSS/JS/Assets locales que ya no sean necesarias, ya que la nueva arquitectura las provee de forma centralizada o localizadas en los componentes.
 
 ## Cómo debe usar el usuario este Agente
 
