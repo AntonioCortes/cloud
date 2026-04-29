@@ -44,7 +44,7 @@ Cuando el usuario te pida comenzar o continuar con la refactorización, debes se
 5. **Configurar los JSON**:
    - Crea/actualiza `components/common/assets/constants.json` para el Navbar.
    - Crea/actualiza los `sidebar.json` de cada vista.
-6. **Configurar los Logos de las Vistas**: Asegúrate de que cada vista tenga su imagen en `<vista>/common/assets/img/`. El script principal exige estrictamente que la imagen se llame `logo.svg`. Si la imagen original es un `.png`, `.jpg` o tiene otro nombre (por ejemplo `docker-logo.png`), simplemente renómbrala a `logo.svg`. Los navegadores la renderizarán correctamente leyendo sus bytes.
+6. **Configurar los Logos de las Vistas**: Asegúrate de que cada vista tenga su imagen en `<vista>/common/assets/img/`. El script principal exige estrictamente que la imagen se llame `logo.svg` y sea un archivo vectorial real. Si la imagen original no es un `.svg` (por ejemplo, es un `.png` o `.jpg`), NO la renombres. En su lugar, debes buscar y descargar un logo SVG real con la temática correspondiente (por ejemplo, desde un repositorio de iconos como SimpleIcons), aplicarle el atributo `fill="white"` a la etiqueta `<svg>` para que sea de color blanco, y guardarlo en la ruta adecuada reemplazando la imagen antigua.
 7. **Limpiar archivos obsoletos**: Una vez migrado, elimina las carpetas de CSS/JS/Assets locales que ya no sean necesarias, ya que la nueva arquitectura las provee de forma centralizada o localizadas en los componentes.
 
 ## Cómo debe usar el usuario este Agente
