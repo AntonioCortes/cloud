@@ -1,0 +1,46 @@
+<h1 class="title">Declarative Pipelines Básicos</h1>
+
+<p>Un Pipeline de Jenkins se escribe normalmente en un archivo llamado <code>Jenkinsfile</code>. Jenkins usa la sintaxis Declarativa, que es un formato muy legible y estructurado.</p>
+
+<h3>Anatomía de un Pipeline</h3>
+<p>Todo pipeline moderno se estructura en <strong>Stages</strong> (Fases) y <strong>Steps</strong> (Pasos).</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+pipeline {
+    agent any // Indica que puede correr en cualquier nodo de Jenkins disponible
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Compilando el código...'
+                sh 'make build' // Ejecuta un comando en la shell de Linux
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo 'Ejecutando pruebas unitarias...'
+                sh 'make test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo 'Desplegando la aplicación en producción!'
+                sh './deploy.sh'
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+<span class="center-horizontal caption">El clásico ciclo Build-Test-Deploy en Groovy Declarativo</span>
+
+<h3>Bloques Importantes</h3>
+<ul>
+    <li><strong>pipeline { }</strong>: Es el bloque envolvente. Todo lo declarativo debe ir dentro.</li>
+    <li><strong>agent</strong>: Define dónde (en qué máquina física o contenedor) se ejecutará este pipeline.</li>
+    <li><strong>stages</strong>: Contenedor para múltiples fases del ciclo de vida. Las fases se ejecutan de forma secuencial por defecto.</li>
+    <li><strong>steps</strong>: Son los comandos reales a ejecutar (como <code>sh</code> para bash, <code>echo</code> para imprimir en log, o plugins específicos).</li>
+</ul>

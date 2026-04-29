@@ -1,0 +1,34 @@
+<h1 class="title">Jobs Freestyle vs Pipelines</h1>
+
+<p>Históricamente, los usuarios configuraban todo en Jenkins a través de su interfaz gráfica rellenando formularios. Esto se conoce como <strong>Freestyle Jobs</strong>. Hoy en día, el estándar de la industria es utilizar <strong>Pipelines como Código</strong>.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Característica</th>
+			<th scope="col">Freestyle Job</th>
+			<th scope="col">Pipeline as Code (Jenkinsfile)</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Configuración</th>
+			<td>Rellenar casillas en la web.</td>
+			<td>Escribir código (Groovy) en un archivo de texto.</td>
+		</tr>
+		<tr>
+			<th scope="row">Control de Versiones</th>
+			<td>Difícil. Si alguien rompe la configuración, no hay registro histórico.</td>
+			<td>Excelente. Vive en tu repositorio (ej: GitHub) junto a tu código.</td>
+		</tr>
+		<tr>
+			<th scope="row">Tolerancia a fallos</th>
+			<td>Si Jenkins se reinicia, el job en curso se pierde.</td>
+			<td>Pueden sobrevivir a reinicios del servidor maestro.</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Evolución en Jenkins</span>
+
+<h3>¿Por qué migrar a Pipelines?</h3>
+<p>Imagina que tienes 50 microservicios y necesitas cambiar un paso en su proceso de compilación. Con <em>Freestyle Jobs</em> tendrías que editar a mano 50 formularios web. Con <em>Pipelines</em>, puedes usar código reutilizable o hacer un <code>git push</code> masivo. ¡La automatización as Code es el camino a seguir!</p>

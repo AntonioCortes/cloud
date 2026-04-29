@@ -1,0 +1,45 @@
+<h1 class="title">Agentes y Nodos</h1>
+
+<p>A medida que tu equipo crece, Jenkins tendrá que ejecutar muchos pipelines a la vez. Si el servidor maestro (el que aloja la interfaz web) se encarga de compilarlos todos, colapsará rápidamente. Por ello, Jenkins utiliza una arquitectura distribuida.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Rol</th>
+			<th scope="col">Responsabilidad</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Master (Control Plane)</th>
+			<td>Sirve la interfaz web, planifica los jobs, y monitoriza los agentes. <strong>¡Nunca ejecutes compilaciones pesadas aquí!</strong></td>
+		</tr>
+		<tr>
+			<th scope="row">Agent / Node (Worker)</th>
+			<td>Máquinas conectadas al Master (Linux, Windows, o Contenedores Docker efímeros) que hacen el trabajo duro.</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">La regla de oro: Mantén el Master ligero</span>
+
+<h3>Asignación de carga de trabajo</h3>
+<p>Cuando escribes tu Pipeline, puedes decirle a Jenkins que ejecute todo el pipeline o solo una fase en un nodo específico usando etiquetas (labels).</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+pipeline {
+    // Escoger un nodo Linux que tenga Docker instalado
+    agent { label 'linux && docker' }
+
+    stages {
+        stage('Build iOS App') {
+            // Este stage específico correrá en un nodo MacOS
+            agent { label 'macos' }
+            steps {
+                sh 'xcodebuild'
+            }
+        }
+    }
+}
+</code></pre>
+</div>

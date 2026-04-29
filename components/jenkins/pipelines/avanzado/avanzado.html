@@ -1,0 +1,47 @@
+<h1 class="title">Pipelines Avanzados</h1>
+
+<p>Una vez dominas el Pipeline Declarativo básico, Jenkins te ofrece herramientas muy poderosas para escalar y reutilizar tu código en infraestructuras masivas.</p>
+
+<h3>Scripted Pipelines</h3>
+<p>Mientras que el modelo "Declarativo" es estricto y estructurado, existe otro formato llamado "Scripted Pipeline". Este te permite escribir código Groovy libre y usar bucles <code>for</code>, sentencias <code>if/else</code> complejas y manejar excepciones libremente.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+// Ejemplo de Scripted Pipeline
+node('linux') {
+    stage('Build dinámico') {
+        def envs = ['dev', 'staging', 'prod']
+        for (e in envs) {
+            echo "Desplegando en ${e}"
+        }
+    }
+}
+</code></pre>
+</div>
+
+<h3>Shared Libraries (Librerías Compartidas)</h3>
+<p>Si tienes 50 repositorios y todos compilan una app de Node.js de la misma forma, no copies el mismo Jenkinsfile 50 veces. Crea una <strong>Shared Library</strong> (un repositorio Git separado de Jenkins) con una función global llamada <code>buildNodeJS()</code> y úsala en todos tus pipelines con una sola línea de código.</p>
+
+<h3>El bloque Post</h3>
+<p>¿Quieres que te avise por Slack si falla la compilación? El bloque <code>post</code> se añade al final de un Pipeline Declarativo y reacciona al estado final de la ejecución:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+pipeline {
+    agent any
+    stages { /* ... */ }
+    post {
+        success {
+            echo '¡El pipeline pasó con éxito!'
+        }
+        failure {
+            echo '¡El pipeline falló!'
+            // slackSend channel: '#alertas', message: 'Fallo en Producción'
+        }
+        always {
+            echo 'Esto se ejecuta pase lo que pase (ideal para limpieza)'
+        }
+    }
+}
+</code></pre>
+</div>

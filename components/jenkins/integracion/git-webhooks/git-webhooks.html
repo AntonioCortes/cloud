@@ -1,0 +1,50 @@
+<h1 class="title">Integración con Git y Webhooks</h1>
+
+<p>El poder de Jenkins reside en su capacidad para reaccionar a eventos. Si subes código a GitHub o GitLab, Jenkins debe enterarse y ejecutar automáticamente el Pipeline para asegurar que el nuevo código funciona.</p>
+
+<h3>Polling SCM vs Webhooks</h3>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Estrategia</th>
+			<th scope="col">Descripción</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Polling SCM (Malo)</th>
+			<td>Jenkins le pregunta a GitHub cada minuto: "¿Hay cambios?". Desperdicia ancho de banda y recursos.</td>
+		</tr>
+		<tr>
+			<th scope="row">Webhooks (Recomendado)</th>
+			<td>Jenkins espera dormido. GitHub le envía una petición HTTP en el momento exacto en que alguien hace <code>git push</code>.</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Estrategias de disparadores (Triggers)</span>
+
+<h3>Definiendo el Trigger en el Pipeline</h3>
+<p>Puedes configurar esto en la interfaz web de Jenkins (en la configuración del Job apuntando al repositorio de Git) o declararlo en el código:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+pipeline {
+    agent any
+    triggers {
+        // Ejecuta el pipeline cada noche a la 1:00 AM usando sintaxis cron
+        cron('H 1 * * *')
+        // Si usas polling SCM (ejemplo cada 15 min):
+        // pollSCM('H/15 * * * *')
+    }
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Testing triggered build...'
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+<p><strong>Nota:</strong> Para los Webhooks, simplemente configuras la URL de Jenkins en GitHub (<code>http://tu-jenkins/github-webhook/</code>) y activas la casilla "GitHub hook trigger for GITScm polling" en tu Job de Jenkins.</p>

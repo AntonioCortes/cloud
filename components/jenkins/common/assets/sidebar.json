@@ -1,62 +1,56 @@
 {
-    "pageContent" : [
+    "pageContent": [
         {
-            "text" : "Conceptos Básicos",
-            "contentId" : "basics",
-            "content" : [
+            "text": "Conceptos Básicos",
+            "contentId": "basics",
+            "content": [
                 {
-                    "text" : "Introducción",
-                    "content" : "component-jenkins-introduccion"
+                    "text": "Introducción",
+                    "content": "component-jenkins-introduccion"
+                },
+                {
+                    "text": "Instalación y Configuración",
+                    "content": "component-jenkins-instalacion-configuracion"
+                },
+                {
+                    "text": "Jobs vs Pipelines",
+                    "content": "component-jenkins-jobs-vs-pipelines"
                 }
             ]
         },
         {
-            "text" : "Conceptos Principales",
-            "contentId" : "main",
-            "content" : [
+            "text": "Pipelines",
+            "contentId": "pipelines",
+            "content": [
                 {
-                    "text" : "content1",
-                    "contentId":"content1",
-                    "content" : [
-                        {
-                            "text" : "option1",
-                            "content" : "jenkins.paths.content1.opt1"
-                        },
-                        {
-                             "text" : "option2",
-                            "content" : "jenkins.paths.content1.opt2"
-                        },
-                        {
-                            "text" : "option3",
-                            "content" : "jenkins.paths.content1.opt3"
-                        }
-                    ]
+                    "text": "Declarative Básico",
+                    "content": "component-jenkins-declarative-basico"
                 },
                 {
-                    "text" : "content2",
-                    "contentId":"content2",
-                    "content" : [
-                        {
-                            "text" : "opt1",
-                            "content" : "jenkins.paths.content2.opt1"
-                        },
-                        {
-                             "text" : "opt2",
-                            "content" : "jenkins.paths.content2.opt2"
-                        }
-                    ]
+                    "text": "Pipelines Avanzados",
+                    "content": "component-jenkins-avanzado"
+                }
+            ]
+        },
+        {
+            "text": "Arquitectura e Integración",
+            "contentId": "architecture",
+            "content": [
+                {
+                    "text": "Agentes y Nodos",
+                    "content": "component-jenkins-agentes-nodos"
                 },
                 {
-                    "text" : "content3",
-                    "content" : "jenkins.paths.content3"
+                    "text": "Integración con Git",
+                    "content": "component-jenkins-git-webhooks"
                 }
             ]
         }
     ],
-    "links" : [
+    "links": [
         {
-            "text" : "***",
-            "href" : ""
+            "text": "Documentación Oficial Jenkins",
+            "href": "https://www.jenkins.io/doc/"
         }
     ]
 }
