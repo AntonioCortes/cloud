@@ -1,37 +1,25 @@
-<h1 class="title">Seguridad en Docker</h1>
+<h1 class="title">Seguridad y Hardening en Docker</h1>
 
-<p>Garantizar la seguridad de tus contenedores es vital para prevenir intrusiones en tu infraestructura.</p>
+<p>Los contenedores no son cajas mágicas de seguridad impenetrable. Dado que comparten el kernel del host, una escalada de privilegios en el contenedor puede comprometer todo el servidor. El Hardening es obligatorio.</p>
 
-<h3>Buenas Prácticas Clave</h3>
-<ul>
-    <li><strong>Principio de Mínimo Privilegio:</strong> Nunca ejecutes la aplicación interna del contenedor como el usuario <code>root</code>. Crea y usa un usuario sin privilegios en tu Dockerfile.</li>
-    <li><strong>Imágenes Ligeras y Oficiales:</strong> Usa imágenes base verificadas (Oficiales de Docker Hub) y prefiere distribuciones minimalistas como <code>Alpine</code> o imágenes <code>Distroless</code> para reducir la superficie de ataque.</li>
-    <li><strong>No filtres secretos:</strong> No copies contraseñas ni claves API en el Dockerfile. Usa herramientas como Docker Secrets o inyéctalas en tiempo de ejecución.</li>
-</ul>
+<h3>1. Rootless Mode</h3>
+<p>Por defecto, el demonio de Docker corre como <code>root</code>. Un atacante que vulnere el demonio obtiene control total. El modo <em>Rootless</em> ejecuta tanto el demonio como los contenedores dentro de un <em>User Namespace</em>, engañando al proceso para que se crea root dentro del contenedor, pero siendo un usuario sin privilegios en la máquina host.</p>
 
-<h3>Ejemplo: Usuario sin privilegios</h3>
-<div class="center-horizontal">
-<pre><code class="language-dockerfile">
-FROM node:18-alpine
+<h3>2. Drop Capabilities (Eliminar Privilegios de Linux)</h3>
+<p>El kernel de Linux divide los privilegios de root en "Capabilities" (ej. <code>CAP_NET_ADMIN</code> para modificar redes, <code>CAP_SYS_TIME</code> para cambiar la hora). Docker por defecto otorga varias, pero la mejor práctica es quitarlas todas (drop all) y añadir solo las estrictamente necesarias.</p>
 
-# Crear directorio y asignar permisos al usuario node que viene en la imagen
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-
-# Cambiar al usuario sin privilegios 'node'
-USER node
-
-EXPOSE 3000
-CMD ["npm", "start"]
-</code></pre>
-</div>
-
-<h3>Escaneo de Vulnerabilidades</h3>
-<p>Revisa tus imágenes en busca de CVEs (Vulnerabilidades Comunes) antes de desplegarlas:</p>
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker scout cves mi-app:1.0
+# Desplegando máxima paranoia de seguridad
+docker run -d \
+  --name app-segura \
+  --cap-drop ALL \
+  --cap-add NET_BIND_SERVICE \
+  --read-only \
+  mi-app
 </code></pre>
 </div>
+<span class="center-horizontal caption">El contenedor no puede ejecutar nada como root real, ni modificar su propio sistema de archivos (--read-only).</span>
+
+<h3>3. Imágenes Distroless y Escaneo</h3>
+<p>Las imágenes <code>Alpine</code> son populares, pero aún incluyen un gestor de paquetes (apk) y una shell (sh). Las imágenes <strong>Distroless</strong> (creadas por Google) no tienen <em>nada</em> más que las librerías necesarias para ejecutar tu aplicación. Sin shell, un atacante no puede ejecutar comandos incluso si inyecta código.</p>

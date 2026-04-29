@@ -1,34 +1,36 @@
-<h1 class="title">Jobs Freestyle vs Pipelines</h1>
+<h1 class="title">El Cambio de Paradigma: Pipeline as Code</h1>
 
-<p>Históricamente, los usuarios configuraban todo en Jenkins a través de su interfaz gráfica rellenando formularios. Esto se conoce como <strong>Freestyle Jobs</strong>. Hoy en día, el estándar de la industria es utilizar <strong>Pipelines como Código</strong>.</p>
+<p>Para entender Jenkins a nivel experto, debes comprender la historia de la Integración Continua (CI). Antaño, los "Freestyle Jobs" gobernaban; eran interfaces web llenas de casillas donde el equipo de DevOps configuraba qué repositorios descargar y qué scripts ejecutar.</p>
+
+<h3>El problema del "ClickOps"</h3>
+<ul>
+    <li><strong>Síndrome del Servidor Mascota:</strong> Si alguien cambiaba accidentalmente una configuración vital en un Job de la interfaz web, el build se rompía y nadie sabía quién ni qué había tocado (sin auditoría).</li>
+    <li><strong>Falta de portabilidad:</strong> Migrar 100 Jobs visuales a otro servidor de Jenkins requería exportar XMLs de forma manual y frágil.</li>
+</ul>
+
+<h3>La Revolución: Pipeline as Code</h3>
+<p>Jenkins introdujo los archivos <code>Jenkinsfile</code>. Este es el concepto de <strong>Infraestructura como Código (IaC)</strong> llevado al ciclo de vida del software.</p>
 
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th scope="col">Característica</th>
-			<th scope="col">Freestyle Job</th>
-			<th scope="col">Pipeline as Code (Jenkinsfile)</th>
+			<th scope="col">Ventaja</th>
+			<th scope="col">Explicación</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<th scope="row">Configuración</th>
-			<td>Rellenar casillas en la web.</td>
-			<td>Escribir código (Groovy) en un archivo de texto.</td>
+			<th scope="row">Control de Versiones (Git)</th>
+			<td>El <code>Jenkinsfile</code> vive dentro de tu repositorio (al lado de tu <code>package.json</code> o <code>pom.xml</code>). Cada cambio en el flujo de CI/CD queda registrado en un <em>commit</em>, con autor y fecha.</td>
 		</tr>
 		<tr>
-			<th scope="row">Control de Versiones</th>
-			<td>Difícil. Si alguien rompe la configuración, no hay registro histórico.</td>
-			<td>Excelente. Vive en tu repositorio (ej: GitHub) junto a tu código.</td>
+			<th scope="row">Revisiones de Código (PRs)</th>
+			<td>Un desarrollador no puede cambiar la forma de compilar sin abrir un Pull Request que otro compañero debe aprobar. Esto asegura la calidad del proceso de build.</td>
 		</tr>
 		<tr>
-			<th scope="row">Tolerancia a fallos</th>
-			<td>Si Jenkins se reinicia, el job en curso se pierde.</td>
-			<td>Pueden sobrevivir a reinicios del servidor maestro.</td>
+			<th scope="row">Sobrevivencia a Reinicios</th>
+			<td>A diferencia de los Freestyle Jobs, los Pipelines modernos tienen un motor interno capaz de pausarse. Si Jenkins se reinicia abruptamente, el Pipeline se pausa y continúa donde lo dejó al volver a encenderse.</td>
 		</tr>
 	</tbody>
 </table>
-<span class="center-horizontal caption">Evolución en Jenkins</span>
-
-<h3>¿Por qué migrar a Pipelines?</h3>
-<p>Imagina que tienes 50 microservicios y necesitas cambiar un paso en su proceso de compilación. Con <em>Freestyle Jobs</em> tendrías que editar a mano 50 formularios web. Con <em>Pipelines</em>, puedes usar código reutilizable o hacer un <code>git push</code> masivo. ¡La automatización as Code es el camino a seguir!</p>
+<span class="center-horizontal caption">Por qué la industria entera migró a Pipeline as Code</span>

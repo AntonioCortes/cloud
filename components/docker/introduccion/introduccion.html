@@ -1,41 +1,35 @@
-<h1 class="title">Introducción a Docker</h1>
+<h1 class="title">Introducción a Docker (0 to Hero)</h1>
 
-<p>Docker es una plataforma abierta diseñada para desarrollar, enviar y ejecutar aplicaciones. Te permite separar tus aplicaciones de tu infraestructura, lo que significa que puedes entregar software rápidamente.</p>
+<p>Para dominar Docker, primero debes olvidar el concepto de "Máquina Virtual" y entender qué hace exactamente el núcleo del sistema operativo Linux. Docker no emula hardware; utiliza características nativas del kernel de Linux para crear procesos completamente aislados que *creen* estar en su propia máquina.</p>
 
-<h3>La analogía: Contenedores vs. Máquinas Virtuales</h3>
-<p>Para entender Docker, es útil compararlo con la virtualización tradicional (Máquinas Virtuales o VMs).</p>
+<h3>La magia detrás del Telón: Namespaces y Cgroups</h3>
+
+<p>Un contenedor es simplemente un proceso en tu ordenador al que se le han aplicado dos tecnologías clave del kernel de Linux:</p>
 
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th scope="col">Característica</th>
-			<th scope="col">Máquinas Virtuales (VM)</th>
-			<th scope="col">Contenedores Docker</th>
+			<th scope="col">Tecnología del Kernel</th>
+			<th scope="col">¿Qué hace? (Aislamiento)</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<th scope="row">Aislamiento</th>
-			<td>Aislamiento total de hardware mediante un Hypervisor.</td>
-			<td>Aislamiento de procesos a nivel del sistema operativo.</td>
+			<th scope="row">Namespaces</th>
+			<td>Aísla lo que el proceso puede <strong>ver</strong>. Le da al contenedor su propio árbol de procesos (PID namespace), su propia red (NET namespace) y su propio sistema de archivos (MNT namespace).</td>
 		</tr>
 		<tr>
-			<th scope="row">Sistema Operativo (OS)</th>
-			<td>Cada VM incluye un SO Invitado (Guest OS) completo, ocupando GBs.</td>
-			<td>Comparten el kernel del SO Anfitrión (Host OS), son ligeros.</td>
-		</tr>
-		<tr>
-			<th scope="row">Arranque</th>
-			<td>Minutos (requiere arrancar un SO entero).</td>
-			<td>Milisegundos o Segundos (es solo un proceso).</td>
+			<th scope="row">Control Groups (cgroups)</th>
+			<td>Aísla lo que el proceso puede <strong>usar</strong>. Limita la cantidad de CPU, Memoria RAM y ancho de banda de I/O de disco que el contenedor puede consumir, evitando que monopolice el sistema.</td>
 		</tr>
 	</tbody>
 </table>
-<span class="center-horizontal caption">Tabla comparativa: VMs vs Docker</span>
+<span class="center-horizontal caption">El núcleo técnico de los contenedores</span>
 
-<h3>Arquitectura Cliente-Servidor</h3>
+<h3>Arquitectura de Docker</h3>
+<p>Cuando ejecutas un comando de Docker, intervienen tres piezas fundamentales:</p>
 <ul>
-    <li><strong>Docker Client:</strong> La línea de comandos que utilizamos para mandar instrucciones (como <code>docker run</code>).</li>
-    <li><strong>Docker Daemon (dockerd):</strong> El servicio pesado que corre en segundo plano y hace el trabajo duro de construir, correr y distribuir contenedores.</li>
-    <li><strong>Docker Registry:</strong> El almacén de imágenes (como Docker Hub), desde donde descargamos las aplicaciones empaquetadas.</li>
+    <li><strong>Docker Client:</strong> La CLI (`docker run`). Es un cliente ligero que envía peticiones HTTP REST.</li>
+    <li><strong>Docker Daemon (dockerd):</strong> El servidor que escucha las peticiones de la API REST y gestiona los objetos (construye imágenes, arranca contenedores usando `containerd`).</li>
+    <li><strong>Registry:</strong> El almacén en la nube donde residen las plantillas inmutables (Imágenes) listas para descargar.</li>
 </ul>

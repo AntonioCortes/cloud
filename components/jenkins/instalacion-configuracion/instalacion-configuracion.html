@@ -1,44 +1,41 @@
-<h1 class="title">Instalación y Configuración</h1>
+<h1 class="title">Instalación Avanzada: DooD y JVM</h1>
 
-<p>La forma más moderna, limpia y recomendada para principiantes de probar Jenkins es ejecutarlo como un contenedor Docker. De esta forma, no instalas dependencias pesadas en tu sistema host como Java o herramientas de construcción.</p>
+<p>Montar Jenkins en Docker es fácil, pero prepararlo para CI/CD real requiere conocimientos avanzados. Necesitas que Jenkins sea capaz de compilar contenedores Docker dentro de sus propios pipelines, y necesitas afinar la Máquina Virtual de Java (JVM).</p>
 
-<h3>Ejecutar Jenkins con Docker</h3>
-<p>Abre una terminal y ejecuta el siguiente comando. Esto descargará la imagen recomendada y la ejecutará exponiendo el puerto 8080:</p>
+<h3>Docker out of Docker (DooD) vs Docker in Docker (DinD)</h3>
+<p>Evita <em>DinD</em> (correr un demonio de Docker anidado dentro de Jenkins) por problemas de seguridad y rendimiento de archivos. La técnica experta es <em>DooD</em>: mapear el socket del host para que Jenkins utilice el demonio del servidor padre para crear contenedores <em>hermanos</em>.</p>
 
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker run -p 8080:8080 -p 50000:50000 --restart=on-failure -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk17
+# Lanzamiento experto de Jenkins
+docker run -d \
+  --name jenkins \
+  --restart always \
+  -p 8080:8080 \
+  -p 50000:50000 \
+  -v jenkins_data:/var/jenkins_home \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -e JAVA_OPTS="-Xmx2048m -Xms512m -XX:+UseG1GC" \
+  jenkins/jenkins:lts
 </code></pre>
 </div>
 
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th scope="col">Parámetro</th>
-			<th scope="col">Explicación</th>
+			<th scope="col">Configuración</th>
+			<th scope="col">Impacto</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<th scope="row">-p 8080:8080</th>
-			<td>Mapea el puerto de la interfaz web para que puedas acceder desde tu navegador.</td>
+			<th scope="row">/var/run/docker.sock</th>
+			<td>Mapeo del socket. Permite a los pipelines ejecutar <code>docker build</code> y <code>docker run</code> usando el Engine del anfitrión.</td>
 		</tr>
 		<tr>
-			<th scope="row">-p 50000:50000</th>
-			<td>Puerto usado para que los agentes JNLP (esclavos) se conecten al master.</td>
-		</tr>
-		<tr>
-			<th scope="row">-v jenkins_home...</th>
-			<td>Crea un volumen persistente para que no pierdas tu configuración si el contenedor se apaga.</td>
+			<th scope="row">JAVA_OPTS</th>
+			<td>Asignación estricta de memoria (Heap Size) y uso del Garbage Collector (G1GC) para evitar que Jenkins colapse con cientos de builds concurrentes.</td>
 		</tr>
 	</tbody>
 </table>
-<span class="center-horizontal caption">Desglose del comando Docker</span>
-
-<h3>El Asistente Inicial (Wizard)</h3>
-<p>Al acceder por primera vez a <code>http://localhost:8080</code>, Jenkins estará bloqueado. Te pedirá una contraseña inicial que verás impresa en los logs de la terminal de Docker.</p>
-<ul>
-    <li>Copia y pega la contraseña inicial de los logs.</li>
-    <li>Selecciona <strong>"Install suggested plugins"</strong>. Esto descargará Git, Pipeline y otras herramientas esenciales automáticamente.</li>
-    <li>Crea tu primer usuario administrador y empieza a usar Jenkins.</li>
-</ul>
+<span class="center-horizontal caption">Configuración robusta de producción</span>

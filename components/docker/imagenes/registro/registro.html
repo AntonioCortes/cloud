@@ -1,30 +1,27 @@
-<h1 class="title">Registro de Imágenes</h1>
+<h1 class="title">Registros y Semantic Versioning</h1>
 
-<p>Un Docker Registry es un sistema de almacenamiento y distribución de imágenes. <strong>Docker Hub</strong> es el registro público por defecto, pero puedes configurar registros privados (como AWS ECR o Harbor).</p>
+<p>Un Docker Registry es la infraestructura donde se alojan tus imágenes empaquetadas. Docker Hub es el registro público, pero en la empresa utilizarás registros privados (AWS ECR, Azure ACR, Google GCR o Harbor auto-alojado).</p>
 
-<h3>Distribución de Imágenes</h3>
+<h3>El Peligro de "latest"</h3>
+<p>La etiqueta `latest` es simplemente la que se aplica por defecto si no especificas ninguna. <strong>Nunca uses `latest` en producción</strong>. Si alguien sube una versión con un error crítico bajo la etiqueta `latest`, tus servidores la descargarán y romperán la app.</p>
 
-<p>Descargar una imagen desde el registro público:</p>
+<p>Utiliza <strong>Semantic Versioning (SemVer)</strong>: `MAJOR.MINOR.PATCH` (ej. `v1.2.4`).</p>
+
+<h3>Autenticación y Push</h3>
+<p>Para subir imágenes a un registro privado corporativo, el flujo completo es:</p>
+
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker pull ubuntu:20.04
+# 1. Autenticarte en el registro corporativo usando un token seguro
+docker login mipropioregistro.com:5000
+
+# 2. Etiquetar (Tag) la imagen apuntando al FQDN del registro
+docker tag mi-app:v1.2.4 mipropioregistro.com:5000/mi-equipo/mi-app:v1.2.4
+
+# 3. Empujar la imagen (Push)
+docker push mipropioregistro.com:5000/mi-equipo/mi-app:v1.2.4
 </code></pre>
 </div>
 
-<p>Antes de subir tu propia imagen, necesitas autenticarte en el registro:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker login
-</code></pre>
-</div>
-
-<p>Para subir una imagen, primero debes etiquetarla (tag) con tu nombre de usuario o la URL del registro privado:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-# Renombrar/Etiquetar
-docker tag mi-app:1.0 mi-usuario/mi-app:1.0
-
-# Subir al registro
-docker push mi-usuario/mi-app:1.0
-</code></pre>
-</div>
+<h3>Docker Content Trust (DCT)</h3>
+<p>Para máxima seguridad, los registros modernos soportan firma de imágenes. Si activas <code>export DOCKER_CONTENT_TRUST=1</code>, Docker verificará la firma criptográfica de la imagen antes de ejecutar el contenedor para asegurar que no ha sido alterada por un atacante.</p>

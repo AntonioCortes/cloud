@@ -1,42 +1,25 @@
-<h1 class="title">Networking</h1>
+<h1 class="title">Networking Interno y DNS</h1>
 
-<p>El sistema de redes (networking) de Docker permite a los contenedores comunicarse entre sí de forma segura, o con el mundo exterior.</p>
+<p>El stack de redes de Docker utiliza <em>Network Namespaces</em> y puentes virtuales (virtual bridges) de Linux (<code>docker0</code>) para enrutar tráfico. Conocer los drivers de red es crítico para microservicios.</p>
 
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th scope="col">Tipo de Red</th>
-			<th scope="col">Descripción</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<th scope="row">bridge</th>
-			<td>La red por defecto. Los contenedores en la misma red bridge pueden comunicarse, pero no tienen resolución DNS por nombre de contenedor a menos que sea una red bridge personalizada.</td>
-		</tr>
-		<tr>
-			<th scope="row">host</th>
-			<td>El contenedor usa directamente la interfaz de red del anfitrión. Elimina el aislamiento de red (solo Linux).</td>
-		</tr>
-		<tr>
-			<th scope="row">none</th>
-			<td>Aísla completamente el contenedor de cualquier red.</td>
-		</tr>
-	</tbody>
-</table>
-<span class="center-horizontal caption">Controladores de red principales</span>
+<h3>El Driver Bridge y el DNS de Docker</h3>
+<p>La red `bridge` por defecto de Docker tiene un defecto enorme: no proporciona resolución DNS entre contenedores. Solo puedes comunicarte por la IP del contenedor (que cambia constantemente).</p>
 
-<h3>Creando Redes Personalizadas</h3>
-<p>Se recomienda encarecidamente crear redes <code>bridge</code> personalizadas, ya que proporcionan resolución DNS automática entre contenedores.</p>
+<p>Si creas una <strong>Red Bridge Personalizada</strong>, Docker inyecta un servidor DNS interno en la IP <code>127.0.0.11</code> dentro de cada contenedor. Esto te permite hacer pings y conexiones HTTP utilizando el <em>nombre del contenedor</em>, lo que hace posible la orquestación real.</p>
 
 <div class="center-horizontal">
 <pre><code class="language-bash">
-# Crear una red llamada mi-red
-docker network create mi-red
+# Crear red con resolución DNS incorporada
+docker network create net-backend
 
-# Levantar contenedores adjuntos a esta red
-docker run -d --name mi-backend --network mi-red backend:1.0
-docker run -d --name mi-frontend --network mi-red -p 80:80 frontend:1.0
+# Ahora 'api' y 'db' pueden hablar entre ellos usando sus nombres
+docker run -d --name api --network net-backend mi-api
+docker run -d --name db --network net-backend postgres
 </code></pre>
 </div>
-<span class="center-horizontal caption">El frontend ahora puede comunicarse con el backend haciendo ping a <code>mi-backend</code>.</span>
+
+<h3>Drivers Avanzados: Host y Macvlan</h3>
+<ul>
+    <li><strong>Host:</strong> `docker run --network host`. El contenedor pierde su aislamiento de red y usa el mismo stack que el servidor. Se usa para aplicaciones de ultra-baja latencia donde el NAT de Docker añadiría milisegundos inaceptables.</li>
+    <li><strong>Macvlan:</strong> Permite asignar una dirección MAC real al contenedor, haciéndolo parecer un dispositivo físico directamente conectado a la red de tu oficina o data center. Perfecto para migrar aplicaciones legacy que requieren IPs reales de la misma subred física.</li>
+</ul>

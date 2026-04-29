@@ -1,35 +1,29 @@
-<h1 class="title">Gestión de Imágenes</h1>
+<h1 class="title">Gestión Avanzada de Imágenes</h1>
 
-<p>Administrar las imágenes almacenadas localmente es crucial para no llenar el disco duro de tu servidor o máquina local.</p>
+<p>A medida que construyes y descargas contenedores, las imágenes pueden consumir rápidamente todo el disco de tu servidor. La gestión experta no solo trata de borrar, sino de entender el árbol de imágenes y optimizar el almacenamiento.</p>
 
-<h3>Comandos de Gestión</h3>
+<h3>Dangling Images (Imágenes Colgantes)</h3>
+<p>Cuando construyes una imagen con la etiqueta `mi-app:latest` y luego haces cambios y vuelves a construirla con la misma etiqueta, la imagen anterior no se borra. Pierde su nombre y se convierte en una <em>dangling image</em> (mostrada como `&lt;none&gt;:&lt;none&gt;`).</p>
 
-<p>Listar todas las imágenes descargadas o construidas localmente:</p>
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker images
-</code></pre>
-</div>
-
-<p>Inspeccionar los metadatos completos de una imagen (variables de entorno, arquitectura, capas):</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker inspect nginx:latest
-</code></pre>
-</div>
-
-<p>Eliminar una imagen específica por su nombre o ID:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker rmi nginx:latest
-</code></pre>
-</div>
-
-<h3>Limpieza Profunda (Pruning)</h3>
-<p>Con el tiempo, al construir nuevas imágenes, se generan "dangling images" (imágenes colgantes que ya no tienen etiqueta). Para liberar espacio de forma segura, ejecuta:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
+# Elimina todas las dangling images de forma segura
 docker image prune
+
+# Elimina TODA imagen que no esté en uso por un contenedor (¡Cuidado!)
+docker image prune -a
 </code></pre>
 </div>
-<span class="center-horizontal caption">Añadir el flag -a eliminará toda imagen que no esté siendo usada por un contenedor.</span>
+
+<h3>Exportar e Importar (Air-gapped environments)</h3>
+<p>En servidores de máxima seguridad sin conexión a Internet (air-gapped), no puedes hacer `docker pull`. Un experto sabe cómo mover imágenes físicamente mediante archivos comprimidos (tarballs).</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash">
+# Servidor con Internet: Exporta la imagen a un archivo .tar
+docker save -o ubuntu_image.tar ubuntu:latest
+
+# Servidor Air-gapped: Carga la imagen desde el archivo .tar
+docker load -i ubuntu_image.tar
+</code></pre>
+</div>

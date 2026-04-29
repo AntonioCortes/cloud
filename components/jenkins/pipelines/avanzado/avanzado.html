@@ -1,46 +1,51 @@
-<h1 class="title">Pipelines Avanzados</h1>
+<h1 class="title">Shared Libraries y Groovy Avanzado</h1>
 
-<p>Una vez dominas el Pipeline Declarativo básico, Jenkins te ofrece herramientas muy poderosas para escalar y reutilizar tu código en infraestructuras masivas.</p>
+<p>Si tu empresa tiene 200 repositorios de microservicios, copiar y pegar 200 veces el mismo `Jenkinsfile` es un desastre de mantenimiento. Si cambia la política de despliegue, tendrías que modificar 200 archivos. Aquí es donde brillan las <strong>Shared Libraries</strong>.</p>
 
-<h3>Scripted Pipelines</h3>
-<p>Mientras que el modelo "Declarativo" es estricto y estructurado, existe otro formato llamado "Scripted Pipeline". Este te permite escribir código Groovy libre y usar bucles <code>for</code>, sentencias <code>if/else</code> complejas y manejar excepciones libremente.</p>
+<h3>Estructura Real de una Shared Library</h3>
+<p>Una Shared Library es un repositorio de Git aparte (ej: `jenkins-shared-library.git`) que Jenkins clona dinámicamente antes de cada build. Su estructura experta es:</p>
 
 <div class="center-horizontal">
-<pre><code class="language-groovy">
-// Ejemplo de Scripted Pipeline
-node('linux') {
-    stage('Build dinámico') {
-        def envs = ['dev', 'staging', 'prod']
-        for (e in envs) {
-            echo "Desplegando en ${e}"
-        }
-    }
-}
+<pre><code class="language-bash">
+(root)
++- src/                     # Código Groovy orientado a objetos (Clases)
+|   +- org/empresa/cicd/
+|       +- NotificadorSlack.groovy
++- vars/                    # Variables globales (Funciones que puedes llamar en tu Jenkinsfile)
+|   +- buildMicroservicio.groovy
+|   +- escanearSeguridad.groovy
++- resources/               # Archivos estáticos
+|   +- plantillas-k8s.yaml
 </code></pre>
 </div>
 
-<h3>Shared Libraries (Librerías Compartidas)</h3>
-<p>Si tienes 50 repositorios y todos compilan una app de Node.js de la misma forma, no copies el mismo Jenkinsfile 50 veces. Crea una <strong>Shared Library</strong> (un repositorio Git separado de Jenkins) con una función global llamada <code>buildNodeJS()</code> y úsala en todos tus pipelines con una sola línea de código.</p>
-
-<h3>El bloque Post</h3>
-<p>¿Quieres que te avise por Slack si falla la compilación? El bloque <code>post</code> se añade al final de un Pipeline Declarativo y reacciona al estado final de la ejecución:</p>
+<h3>Implementando el DSL (Domain Specific Language)</h3>
+<p>Dentro de `vars/buildMicroservicio.groovy`, escribes todo tu Pipeline Declarativo enorme. Luego, en los 200 repositorios de los desarrolladores, su `Jenkinsfile` se reduce a una sola línea mágica:</p>
 
 <div class="center-horizontal">
 <pre><code class="language-groovy">
-pipeline {
-    agent any
-    stages { /* ... */ }
-    post {
-        success {
-            echo '¡El pipeline pasó con éxito!'
-        }
-        failure {
-            echo '¡El pipeline falló!'
-            // slackSend channel: '#alertas', message: 'Fallo en Producción'
-        }
-        always {
-            echo 'Esto se ejecuta pase lo que pase (ideal para limpieza)'
-        }
+// Importa la librería (el nombre se configura en Jenkins global)
+@Library('mi-empresa-lib') _
+
+// Llama a la función global. ¡Esto ejecuta todo el pipeline estándar!
+buildMicroservicio(
+    nombre: 'api-pagos',
+    lenguaje: 'java',
+    desplegarEnProd: true
+)
+</code></pre>
+</div>
+
+<h3>Ejecución en Paralelo (Parallel)</h3>
+<p>Para reducir el tiempo total de compilación, ejecuta tareas independientes al mismo tiempo usando el bloque `parallel`.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-groovy">
+stage('Testings y Seguridad') {
+    parallel {
+        stage('Unit Tests') { steps { sh 'make test' } }
+        stage('SonarQube') { steps { sh 'sonar-scanner' } }
+        stage('Cypress E2E') { steps { sh 'npm run e2e' } }
     }
 }
 </code></pre>

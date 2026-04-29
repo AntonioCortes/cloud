@@ -1,50 +1,33 @@
-<h1 class="title">Integración con Git y Webhooks</h1>
+<h1 class="title">Integración Git: Multibranch Pipelines</h1>
 
-<p>El poder de Jenkins reside en su capacidad para reaccionar a eventos. Si subes código a GitHub o GitLab, Jenkins debe enterarse y ejecutar automáticamente el Pipeline para asegurar que el nuevo código funciona.</p>
+<p>Un Pipeline normal atado a un repositorio compila una sola rama (generalmente `main`). Pero en la vida real, un equipo de desarrollo trabaja en docenas de ramas (`feature/X`, `bugfix/Y`) y abriendo *Pull Requests*.</p>
 
-<h3>Polling SCM vs Webhooks</h3>
+<h3>El poder del Multibranch Pipeline</h3>
+<p>Un experto no crea un Job en Jenkins por cada rama nueva. Crea un único <strong>Multibranch Pipeline</strong>. Jenkins escanea automáticamente todo tu repositorio de GitHub o GitLab. Por cada rama que contenga un archivo `Jenkinsfile`, Jenkins crea un Job subordinado automáticamente.</p>
 
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th scope="col">Estrategia</th>
-			<th scope="col">Descripción</th>
+			<th scope="col">Funcionalidad</th>
+			<th scope="col">Comportamiento Multibranch</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<th scope="row">Polling SCM (Malo)</th>
-			<td>Jenkins le pregunta a GitHub cada minuto: "¿Hay cambios?". Desperdicia ancho de banda y recursos.</td>
+			<th scope="row">Descubrimiento</th>
+			<td>Detecta ramas nuevas y Pull Requests instantáneamente.</td>
 		</tr>
 		<tr>
-			<th scope="row">Webhooks (Recomendado)</th>
-			<td>Jenkins espera dormido. GitHub le envía una petición HTTP en el momento exacto en que alguien hace <code>git push</code>.</td>
+			<th scope="row">Limpieza (Orphaned Items)</th>
+			<td>Cuando fusionas o borras una rama en Git, Jenkins elimina el Job temporal asociado para no ensuciar la interfaz.</td>
+		</tr>
+		<tr>
+			<th scope="row">Bloqueo de PRs</th>
+			<td>Si el build de la rama falla, Jenkins reporta el estado (Check) a GitHub, bloqueando el botón de "Merge Pull Request".</td>
 		</tr>
 	</tbody>
 </table>
-<span class="center-horizontal caption">Estrategias de disparadores (Triggers)</span>
+<span class="center-horizontal caption">Automatización a nivel organizacional</span>
 
-<h3>Definiendo el Trigger en el Pipeline</h3>
-<p>Puedes configurar esto en la interfaz web de Jenkins (en la configuración del Job apuntando al repositorio de Git) o declararlo en el código:</p>
-
-<div class="center-horizontal">
-<pre><code class="language-groovy">
-pipeline {
-    agent any
-    triggers {
-        // Ejecuta el pipeline cada noche a la 1:00 AM usando sintaxis cron
-        cron('H 1 * * *')
-        // Si usas polling SCM (ejemplo cada 15 min):
-        // pollSCM('H/15 * * * *')
-    }
-    stages {
-        stage('Test') {
-            steps {
-                echo 'Testing triggered build...'
-            }
-        }
-    }
-}
-</code></pre>
-</div>
-<p><strong>Nota:</strong> Para los Webhooks, simplemente configuras la URL de Jenkins en GitHub (<code>http://tu-jenkins/github-webhook/</code>) y activas la casilla "GitHub hook trigger for GITScm polling" en tu Job de Jenkins.</p>
+<h3>Seguridad de Webhooks</h3>
+<p>Cuando usas Webhooks para disparar Multibranch Pipelines, GitHub envía un Payload HTTP a Jenkins. Para evitar ataques de denegación de servicio (DDoS) o inyecciones, <strong>siempre configura un "Webhook Secret"</strong>. Jenkins validará la firma criptográfica (HMAC) del Payload usando este secreto antes de procesarlo.</p>

@@ -1,42 +1,47 @@
-<h1 class="title">Contenedores</h1>
+<h1 class="title">Dominando los Contenedores</h1>
 
-<p>Un contenedor es una unidad estándar de software que empaqueta código y todas sus dependencias para que la aplicación se ejecute de forma rápida y confiable de un entorno informático a otro. Es esencialmente una instancia en ejecución de una imagen de Docker.</p>
+<p>Cualquiera puede ejecutar `docker run`, pero para llevar una aplicación a producción necesitas conocer a fondo cómo gestionar su ciclo de vida, inyectar configuraciones dinámicas y limitar sus recursos de hardware a través de cgroups.</p>
 
-<h3>Ciclo de Vida de un Contenedor</h3>
-<ul>
-    <li><strong>Created (Creado):</strong> El contenedor se ha preparado pero aún no está corriendo.</li>
-    <li><strong>Running (En ejecución):</strong> El proceso principal del contenedor está activo.</li>
-    <li><strong>Paused (Pausado):</strong> Todos los procesos del contenedor están congelados temporalmente.</li>
-    <li><strong>Stopped/Exited (Detenido):</strong> El proceso ha terminado o se ha forzado su finalización.</li>
-</ul>
+<h3>Inyección Dinámica y Límites de Hardware</h3>
 
-<h3>Comandos Básicos de Consola</h3>
+<p>Imagina que quieres lanzar un contenedor de Redis, pero limitando su memoria RAM, inyectando variables dinámicas y asegurando que se reinicie si el sistema falla. Esto se logra combinando banderas críticas:</p>
 
-<p>Para crear y arrancar un contenedor nuevo (si la imagen no existe localmente, se descargará primero):</p>
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker run -d --name mi-servidor -p 8080:80 nginx
-</code></pre>
-</div>
-<span class="center-horizontal caption">El flag -d lo corre en segundo plano (detached), y -p mapea el puerto 8080 local al 80 del contenedor.</span>
-
-<p>Para ver los contenedores que están actualmente en ejecución:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker ps
+docker run -d \
+  --name redis-cache \
+  --restart unless-stopped \
+  --memory="512m" \
+  --cpus="0.5" \
+  -e REDIS_PASS="secreto-seguro" \
+  -p 127.0.0.1:6379:6379 \
+  redis:7-alpine
 </code></pre>
 </div>
 
-<p>Para detener un contenedor activo de forma segura:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker stop mi-servidor
-</code></pre>
-</div>
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Bandera (Flag)</th>
+			<th scope="col">Explicación Experta</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">--restart unless-stopped</th>
+			<td>Política de reinicio. Le dice al demonio que si el proceso muere por un error (o si el servidor se reinicia), vuelva a levantar el contenedor automáticamente.</td>
+		</tr>
+		<tr>
+			<th scope="row">--memory y --cpus</th>
+			<td>Aplica restricciones directas a los <em>cgroups</em> del kernel. Evita que un <em>memory leak</em> en tu app mate todo el servidor.</td>
+		</tr>
+		<tr>
+			<th scope="row">-p 127.0.0.1:...</th>
+			<td>Bind local. Evita exponer el puerto directamente a Internet (0.0.0.0), exponiéndolo solo a la interfaz local del host (localhost).</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Anatomía de un contenedor preparado para producción</span>
 
-<p>Para eliminar un contenedor (debe estar detenido, o usar el flag -f para forzarlo):</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker rm mi-servidor
-</code></pre>
-</div>
+<h3>Inspección Profunda</h3>
+<p>Si un contenedor falla y `docker logs` no es suficiente, puedes entrar a su Namespace para depurarlo en vivo usando <code>docker exec -it mi-contenedor sh</code>, obteniendo una terminal directa al corazón del proceso aislado.</p>

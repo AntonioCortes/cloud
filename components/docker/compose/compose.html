@@ -1,55 +1,47 @@
-<h1 class="title">Orquestación Local: Docker Compose</h1>
+<h1 class="title">Docker Compose Avanzado</h1>
 
-<p>A menudo, una aplicación moderna no consiste en un único contenedor, sino en múltiples servicios que necesitan comunicarse (por ejemplo, un backend, una base de datos y un frontend). <strong>Docker Compose</strong> es una herramienta para definir y ejecutar aplicaciones multi-contenedor.</p>
+<p>Docker Compose es la herramienta estándar para declarar la infraestructura como código en entornos de desarrollo y pruebas. Un experto no se limita a levantar contenedores, sino que orquesta sus dependencias, estado de salud y redes complejas.</p>
 
-<h3>Infraestructura como Código</h3>
-<p>Con Compose, utilizas un archivo YAML para configurar los servicios de tu aplicación. Esto permite que con un solo comando puedas crear y arrancar todos los servicios de tu configuración.</p>
+<h3>Control de Flujo con Healthchecks</h3>
+<p>El clásico problema de levantar una base de datos y un backend al mismo tiempo es que el backend arranca más rápido e intenta conectarse a la DB antes de que esta termine de inicializarse, provocando un <em>CrashLoop</em>. La directiva <code>depends_on</code> básica no soluciona esto; necesitas usar <strong>healthchecks</strong>.</p>
 
 <div class="center-horizontal">
 <pre><code class="language-yaml">
 version: '3.8'
-
 services:
-  web:
-    image: nginx:latest
-    ports:
-      - "80:80"
+  backend:
+    image: mi-api:1.0
     depends_on:
-      - api
-
-  api:
-    image: mi-backend-api:1.0
-    environment:
-      - DB_HOST=db
-    ports:
-      - "3000:3000"
+      db:
+        condition: service_healthy # Espera a que el healthcheck pase
 
   db:
-    image: postgres:13
+    image: postgres:14
     environment:
-      - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=secreta
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 </code></pre>
 </div>
-<span class="center-horizontal caption">docker-compose.yml declarando una red interna con Nginx, un backend y PostgreSQL</span>
+<span class="center-horizontal caption">El backend solo arrancará cuando postgres confirme que acepta conexiones</span>
 
-<h3>Comandos Clave</h3>
+<h3>Perfiles (Profiles) y Variables de Entorno</h3>
+<p>Puedes usar el mismo <code>docker-compose.yml</code> para desarrollo y pruebas (mocking) usando <strong>Profiles</strong> y cargando secretos dinámicamente desde un archivo <code>.env</code> sin subirlos a Git.</p>
 
-<p>Para levantar toda la infraestructura definida en el YAML en segundo plano:</p>
 <div class="center-horizontal">
-<pre><code class="language-bash">
-docker-compose up -d
-</code></pre>
-</div>
+<pre><code class="language-yaml">
+services:
+  frontend:
+    image: mi-frontend
+    environment:
+      - API_URL=${API_URL:-http://localhost:8080} # Fallback por defecto
 
-<p>Para detener y eliminar todos los contenedores y redes creadas por compose:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker-compose down
+  debug-tools:
+    image: adminer
+    profiles:
+      - debug # Solo se levanta si ejecutas: docker compose --profile debug up
 </code></pre>
 </div>

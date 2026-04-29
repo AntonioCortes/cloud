@@ -1,32 +1,24 @@
-<h1 class="title">Orquestación: Docker Swarm</h1>
+<h1 class="title">Orquestación Experta: Docker Swarm</h1>
 
-<p>Mientras que Docker Compose es excelente para orquestar contenedores en una única máquina, cuando necesitas escalar tu aplicación a través de múltiples servidores (un clúster), necesitas una herramienta de orquestación más avanzada. <strong>Docker Swarm</strong> es el orquestador nativo integrado directamente en el Docker Engine.</p>
+<p>Para alta disponibilidad y balanceo de carga entre múltiples servidores, pasamos de Compose a Swarm. Swarm transforma un grupo de servidores Docker en un único clúster virtual.</p>
 
-<h3>Arquitectura de Swarm</h3>
+<h3>El Algoritmo Raft y el Quórum</h3>
+<p>Los nodos <strong>Manager</strong> mantienen el estado del clúster sincronizado a través del algoritmo de consenso <em>Raft</em>. Para que el clúster sobreviva a caídas, necesitas un número impar de Managers (generalmente 3 o 5) para mantener el Quórum (mayoría absoluta). Si pierdes el Quórum, el clúster no puede asignar nuevas tareas, aunque los contenedores actuales seguirán corriendo.</p>
+
+<h3>Redes Overlay y el Routing Mesh</h3>
+<p>Cuando tienes un servicio (ej. servidor web) replicado en 3 nodos distintos, ¿a qué IP debe atacar el balanceador de carga externo? Swarm resuelve esto con el <strong>Routing Mesh</strong>.</p>
+
 <ul>
-    <li><strong>Nodos Manager:</strong> Mantienen el estado del clúster, planifican los servicios y sirven la API de Swarm.</li>
-    <li><strong>Nodos Worker:</strong> Reciben y ejecutan tareas (contenedores) asignadas por los Managers.</li>
+    <li>Swarm expone el puerto público en <strong>todos los nodos</strong> del clúster simultáneamente.</li>
+    <li>Si un cliente externo ataca al Nodo A (que no tiene el contenedor corriendo), el kernel de Linux en el Nodo A (usando IPVS) enruta mágicamente el tráfico a través de una <strong>red Overlay</strong> cifrada hasta el Nodo B que sí tiene el contenedor.</li>
 </ul>
 
-<h3>Comandos Básicos de Swarm</h3>
-
-<p>Para inicializar un nuevo clúster Swarm (esto convierte la máquina actual en el primer Manager):</p>
 <div class="center-horizontal">
 <pre><code class="language-bash">
-docker swarm init
-</code></pre>
-</div>
+# Crear red cifrada entre diferentes servidores físicos
+docker network create -d overlay --opt encrypted mi-red-global
 
-<p>Para listar los nodos que forman parte del clúster:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker node ls
-</code></pre>
-</div>
-
-<p>Para crear un servicio replicado a lo largo del clúster:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-docker service create --replicas 3 --name mi-web nginx
+# Desplegar servicio replicado y auto-balanceado
+docker service create --name web --replicas 5 -p 80:80 --network mi-red-global nginx
 </code></pre>
 </div>

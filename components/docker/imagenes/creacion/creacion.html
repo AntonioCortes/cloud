@@ -1,40 +1,33 @@
-<h1 class="title">Creación de Imágenes: Dockerfile</h1>
+<h1 class="title">Creación de Imágenes y UnionFS</h1>
 
-<p>Una imagen de Docker es una plantilla de solo lectura que contiene un conjunto de instrucciones para crear un contenedor. A diferencia del contenedor, la imagen es inmutable. Se compone de múltiples <strong>capas (layers)</strong> que se apilan unas sobre otras. Solo la última capa, creada al arrancar el contenedor, es de lectura y escritura.</p>
+<p>Una imagen de Docker no es un bloque sólido; es un conjunto de capas superpuestas montadas bajo un sistema de archivos especial llamado <strong>UnionFS (Union File System)</strong>. Cada instrucción `RUN`, `COPY` o `ADD` en tu Dockerfile crea una nueva capa inmutable.</p>
 
-<h3>El archivo Dockerfile</h3>
-<p>El <code>Dockerfile</code> es un archivo de texto simple que contiene todas las instrucciones paso a paso para construir una imagen.</p>
+<h3>Entendiendo la Caché y las Capas</h3>
+<p>Docker compila las imágenes en orden secuencial. Si cambias el código fuente (capa 5), Docker debe reconstruir esa capa y todas las posteriores. Por tanto, <strong>la regla de oro es instalar dependencias pesadas antes de copiar el código fuente que cambia frecuentemente</strong>.</p>
+
+<h3>Multistage Builds (El secreto del experto)</h3>
+<p>En lenguajes compilados (como Go o Java), necesitas el compilador para generar el binario, pero no lo necesitas para ejecutarlo en producción. Los <em>Multistage Builds</em> te permiten crear contenedores minúsculos y seguros.</p>
 
 <div class="center-horizontal">
 <pre><code class="language-dockerfile">
-# Usar una imagen oficial de Node.js ligera como base
-FROM node:18-alpine
-
-# Establecer el directorio de trabajo dentro de la imagen
+# ==========================================
+# Etapa 1: Compilación (Pesada)
+# ==========================================
+FROM golang:1.20-alpine AS builder
 WORKDIR /app
-
-# Copiar el archivo package.json al directorio de trabajo
-COPY package*.json ./
-
-# Ejecutar el comando para instalar dependencias
-RUN npm install
-
-# Copiar el resto del código fuente a la imagen
+COPY go.mod go.sum ./
+RUN go mod download
+# Copiamos el código y compilamos un binario estático
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o mi-api .
 
-# Exponer el puerto en el que escucha la aplicación
-EXPOSE 3000
-
-# El comando por defecto a ejecutar cuando el contenedor inicie
-CMD ["npm", "start"]
+# ==========================================
+# Etapa 2: Producción (Ultraligera y Segura)
+# ==========================================
+FROM scratch
+# Solo copiamos el binario ya compilado de la etapa anterior
+COPY --from=builder /app/mi-api /mi-api
+ENTRYPOINT ["/mi-api"]
 </code></pre>
 </div>
-<span class="center-horizontal caption">Ejemplo típico de Dockerfile para una app Node.js</span>
-
-<p>Para construir la imagen a partir de este archivo, usamos el comando <code>docker build</code>:</p>
-<div class="center-horizontal">
-<pre><code class="language-bash">
-# El punto final indica que busque el Dockerfile en el directorio actual
-docker build -t mi-app-node:1.0 .
-</code></pre>
-</div>
+<span class="center-horizontal caption">Ejemplo de Multistage Build. La imagen final partirá de "scratch" (vacía), ocupando apenas megabytes.</span>

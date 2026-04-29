@@ -1,53 +1,36 @@
-<h1 class="title">Instalación y Configuración</h1>
+<h1 class="title">Instalación Avanzada y Configuración</h1>
 
-<p>Existen dos formas principales de instalar Docker dependiendo del sistema operativo y las necesidades: Docker Engine y Docker Desktop.</p>
+<p>Instalar Docker parece sencillo (un simple instalador o `apt-get`), pero entender su arquitectura interna es lo que te diferencia de un principiante. Docker funciona bajo un modelo Cliente-Servidor comunicándose a través de un <strong>socket UNIX</strong>.</p>
 
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th scope="col">Opción</th>
-			<th scope="col">Descripción</th>
-			<th scope="col">Plataformas</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<th scope="row">Docker Engine</th>
-			<td>La versión nativa de código abierto. Solo incluye el demonio y la CLI. Ideal para servidores.</td>
-			<td>Linux</td>
-		</tr>
-		<tr>
-			<th scope="row">Docker Desktop</th>
-			<td>Aplicación con interfaz gráfica. Incluye una máquina virtual ligera para correr el demonio en SO no nativos.</td>
-			<td>Windows, macOS, Linux</td>
-		</tr>
-	</tbody>
-</table>
-<span class="center-horizontal caption">Opciones de Instalación</span>
+<h3>Arquitectura del Demonio</h3>
+<p>En Linux, el cliente (la CLI `docker`) se comunica con el demonio (dockerd) a través de `/var/run/docker.sock`. Este archivo es sumamente poderoso: cualquier usuario con acceso a este socket tiene permisos equivalentes a `root` en la máquina anfitriona.</p>
 
-<h3>Instalación en Linux (Ubuntu/Debian)</h3>
-<p>Para instalar la versión nativa de Docker Engine, se suelen usar los repositorios oficiales:</p>
 <div class="center-horizontal">
 <pre><code class="language-bash">
-# Actualizar e instalar dependencias
-sudo apt-get update
-sudo apt-get install ca-certificates curl
+# Instalación recomendada en servidores de producción (Linux)
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
 
-# Añadir la clave GPG oficial de Docker
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-# Instalar Docker Engine
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Añadir tu usuario al grupo 'docker' para no usar sudo (CUIDADO: Equivale a root)
+sudo usermod -aG docker $USER
 </code></pre>
 </div>
 
-<h3>Verificación</h3>
-<p>Para confirmar que la instalación ha sido exitosa y el demonio está corriendo:</p>
+<h3>El archivo daemon.json</h3>
+<p>Para configuraciones avanzadas a nivel de servidor (como configurar DNS personalizados, proxies o rotación automática de logs), no usamos parámetros en la consola. Editamos el archivo <code>/etc/docker/daemon.json</code>.</p>
+
 <div class="center-horizontal">
-<pre><code class="language-bash">
-docker --version
-docker info
+<pre><code class="language-json">
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "default-address-pools": [
+    {"base": "10.200.0.0/16", "size": 24}
+  ]
+}
 </code></pre>
 </div>
+<span class="center-horizontal caption">Ejemplo: Limitando los logs para que no llenen el disco duro y cambiando la subred por defecto.</span>
