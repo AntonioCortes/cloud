@@ -51,4 +51,4 @@ Cuando el usuario te pida comenzar o continuar con la refactorización, debes se
 
 Cuando quieras que la IA comience a refactorizar una parte de este proyecto, simplemente dile:
 
-> "Actúa siguiendo las instrucciones de @[cloud/refactoring-agent.md] y comienza a refactorizar el proyecto."
+> "Actúa siguiendo las instrucciones de @[agents/refactoring-agent.md] y comienza a refactorizar el proyecto."
