@@ -6,7 +6,7 @@
             "content" : [
                 {
                     "text" : "Introducción",
-                    "content" : "kafka.paths.introduccion"
+                    "content" : "component-kafka-introduccion"
                 }
             ]
         },

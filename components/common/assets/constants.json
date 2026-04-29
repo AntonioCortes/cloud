@@ -1,0 +1,28 @@
+{
+    "common" : {
+        "paths" : {
+            "navbar" : "components/common/navbar.html",
+            "sidebar" : "components/common/sidebar.html"
+        }
+    },
+    "mainView" : {
+        "topic" : "Docker",
+        "basePath" : "components/docker"
+    },
+    "jenkins" : {
+        "topic" : "Jenkins",
+        "basePath" : "components/jenkins"
+    },
+    "k8s" : {
+        "topic" : "Kubernetes",
+        "basePath" : "components/k8s"
+    },
+    "kafka" : {
+        "topic" : "Kafka",
+        "basePath" : "components/kafka"
+    },
+    "rabbitmq" : {
+        "topic" : "RabbitMQ",
+        "basePath" : "components/rabbitmq"
+    }
+}

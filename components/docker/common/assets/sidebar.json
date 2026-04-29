@@ -6,11 +6,11 @@
             "content" : [
                 {
                     "text" : "Introducción",
-                    "content" : "docker.paths.introduccion"
+                    "content" : "component-docker-introduccion"
                 },
                 {
                     "text" : "Instalación y Configuración",
-                    "content" : "docker.paths.instalacionConfiguracion"
+                    "content" : "component-docker-instalacion-configuracion"
                 }
             ]
                 
@@ -21,7 +21,7 @@
             "content" : [
                 {
                     "text" : "Contenedores",
-                    "content" : "docker.paths.contenedores"
+                    "content" : "component-docker-contenedores"
                 },
                 {
                     "text" : "Imágenes",
@@ -29,33 +29,33 @@
                     "content" : [
                         {
                             "text" : "Creación",
-                            "content" : "docker.paths.imagenes.creacion"
+                            "content" : "component-docker-imagenes-creacion"
                         },
                         {
                              "text" : "Gestión",
-                            "content" : "docker.paths.imagenes.gestion"
+                            "content" : "component-docker-imagenes-gestion"
                         },
                         {
                              "text" : "Registro",
-                            "content" : "docker.paths.imagenes.registro"
+                            "content" : "component-docker-imagenes-registro"
                         }
                     ]
                 },
                 {
                     "text" : "Almacenamiento y volúmenes",
-                    "content" : "docker.paths.almacenamientoVolumenes"
+                    "content" : "component-docker-almacenamiento-volumenes"
                 },
                 {
                     "text" : "Orquestación",
-                    "content" : "docker.paths.orquestacion"
+                    "content" : "component-docker-orquestacion"
                 },
                 {
                     "text" : "Networking",
-                    "content" : "docker.paths.networking"
+                    "content" : "component-docker-networking"
                 },
                 {
                     "text" : "Seguridad",
-                    "content" : "docker.paths.seguridad"
+                    "content" : "component-docker-seguridad"
                 }
             ]
                 

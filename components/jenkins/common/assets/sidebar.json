@@ -6,7 +6,7 @@
             "content" : [
                 {
                     "text" : "Introducción",
-                    "content" : "jenkins.paths.introduccion"
+                    "content" : "component-jenkins-introduccion"
                 }
             ]
         },

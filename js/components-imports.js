@@ -1,0 +1,14 @@
+import '../components/jenkins/introduccion/introduccion.js';
+import '../components/rabbitmq/introduccion/introduccion.js';
+import '../components/kafka/introduccion/introduccion.js';
+import '../components/k8s/introduccion/introduccion.js';
+import '../components/docker/seguridad/seguridad.js';
+import '../components/docker/almacenamiento-volumenes/almacenamiento-volumenes.js';
+import '../components/docker/introduccion/introduccion.js';
+import '../components/docker/instalacion-configuracion/instalacion-configuracion.js';
+import '../components/docker/imagenes/creacion/creacion.js';
+import '../components/docker/imagenes/gestion/gestion.js';
+import '../components/docker/imagenes/registro/registro.js';
+import '../components/docker/contenedores/contenedores.js';
+import '../components/docker/networking/networking.js';
+import '../components/docker/orquestacion/orquestacion.js';

@@ -6,7 +6,7 @@
             "content" : [
                 {
                     "text" : "Introducción",
-                    "content" : "k8s.paths.introduccion"
+                    "content" : "component-k8s-introduccion"
                 }
             ]
         },
