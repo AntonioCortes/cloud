@@ -1,1 +1,42 @@
 <h1 class="title">Networking</h1>
+
+<p>El sistema de redes (networking) de Docker permite a los contenedores comunicarse entre sí de forma segura, o con el mundo exterior.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Tipo de Red</th>
+			<th scope="col">Descripción</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">bridge</th>
+			<td>La red por defecto. Los contenedores en la misma red bridge pueden comunicarse, pero no tienen resolución DNS por nombre de contenedor a menos que sea una red bridge personalizada.</td>
+		</tr>
+		<tr>
+			<th scope="row">host</th>
+			<td>El contenedor usa directamente la interfaz de red del anfitrión. Elimina el aislamiento de red (solo Linux).</td>
+		</tr>
+		<tr>
+			<th scope="row">none</th>
+			<td>Aísla completamente el contenedor de cualquier red.</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Controladores de red principales</span>
+
+<h3>Creando Redes Personalizadas</h3>
+<p>Se recomienda encarecidamente crear redes <code>bridge</code> personalizadas, ya que proporcionan resolución DNS automática entre contenedores.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash">
+# Crear una red llamada mi-red
+docker network create mi-red
+
+# Levantar contenedores adjuntos a esta red
+docker run -d --name mi-backend --network mi-red backend:1.0
+docker run -d --name mi-frontend --network mi-red -p 80:80 frontend:1.0
+</code></pre>
+</div>
+<span class="center-horizontal caption">El frontend ahora puede comunicarse con el backend haciendo ping a <code>mi-backend</code>.</span>

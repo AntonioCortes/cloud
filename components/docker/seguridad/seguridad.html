@@ -1,1 +1,37 @@
-<h1 class="title">Seguridad</h1>
+<h1 class="title">Seguridad en Docker</h1>
+
+<p>Garantizar la seguridad de tus contenedores es vital para prevenir intrusiones en tu infraestructura.</p>
+
+<h3>Buenas Prácticas Clave</h3>
+<ul>
+    <li><strong>Principio de Mínimo Privilegio:</strong> Nunca ejecutes la aplicación interna del contenedor como el usuario <code>root</code>. Crea y usa un usuario sin privilegios en tu Dockerfile.</li>
+    <li><strong>Imágenes Ligeras y Oficiales:</strong> Usa imágenes base verificadas (Oficiales de Docker Hub) y prefiere distribuciones minimalistas como <code>Alpine</code> o imágenes <code>Distroless</code> para reducir la superficie de ataque.</li>
+    <li><strong>No filtres secretos:</strong> No copies contraseñas ni claves API en el Dockerfile. Usa herramientas como Docker Secrets o inyéctalas en tiempo de ejecución.</li>
+</ul>
+
+<h3>Ejemplo: Usuario sin privilegios</h3>
+<div class="center-horizontal">
+<pre><code class="language-dockerfile">
+FROM node:18-alpine
+
+# Crear directorio y asignar permisos al usuario node que viene en la imagen
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+# Cambiar al usuario sin privilegios 'node'
+USER node
+
+EXPOSE 3000
+CMD ["npm", "start"]
+</code></pre>
+</div>
+
+<h3>Escaneo de Vulnerabilidades</h3>
+<p>Revisa tus imágenes en busca de CVEs (Vulnerabilidades Comunes) antes de desplegarlas:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker scout cves mi-app:1.0
+</code></pre>
+</div>

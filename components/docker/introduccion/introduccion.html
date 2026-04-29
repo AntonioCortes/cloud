@@ -1,3 +1,41 @@
 <h1 class="title">Introducción a Docker</h1>
 
-<p>Docker es una plataforma para construir, ejecutar y empaquetar aplicaciones</p>
+<p>Docker es una plataforma abierta diseñada para desarrollar, enviar y ejecutar aplicaciones. Te permite separar tus aplicaciones de tu infraestructura, lo que significa que puedes entregar software rápidamente.</p>
+
+<h3>La analogía: Contenedores vs. Máquinas Virtuales</h3>
+<p>Para entender Docker, es útil compararlo con la virtualización tradicional (Máquinas Virtuales o VMs).</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Característica</th>
+			<th scope="col">Máquinas Virtuales (VM)</th>
+			<th scope="col">Contenedores Docker</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Aislamiento</th>
+			<td>Aislamiento total de hardware mediante un Hypervisor.</td>
+			<td>Aislamiento de procesos a nivel del sistema operativo.</td>
+		</tr>
+		<tr>
+			<th scope="row">Sistema Operativo (OS)</th>
+			<td>Cada VM incluye un SO Invitado (Guest OS) completo, ocupando GBs.</td>
+			<td>Comparten el kernel del SO Anfitrión (Host OS), son ligeros.</td>
+		</tr>
+		<tr>
+			<th scope="row">Arranque</th>
+			<td>Minutos (requiere arrancar un SO entero).</td>
+			<td>Milisegundos o Segundos (es solo un proceso).</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Tabla comparativa: VMs vs Docker</span>
+
+<h3>Arquitectura Cliente-Servidor</h3>
+<ul>
+    <li><strong>Docker Client:</strong> La línea de comandos que utilizamos para mandar instrucciones (como <code>docker run</code>).</li>
+    <li><strong>Docker Daemon (dockerd):</strong> El servicio pesado que corre en segundo plano y hace el trabajo duro de construir, correr y distribuir contenedores.</li>
+    <li><strong>Docker Registry:</strong> El almacén de imágenes (como Docker Hub), desde donde descargamos las aplicaciones empaquetadas.</li>
+</ul>

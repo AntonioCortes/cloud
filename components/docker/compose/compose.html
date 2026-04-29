@@ -1,0 +1,55 @@
+<h1 class="title">Orquestación Local: Docker Compose</h1>
+
+<p>A menudo, una aplicación moderna no consiste en un único contenedor, sino en múltiples servicios que necesitan comunicarse (por ejemplo, un backend, una base de datos y un frontend). <strong>Docker Compose</strong> es una herramienta para definir y ejecutar aplicaciones multi-contenedor.</p>
+
+<h3>Infraestructura como Código</h3>
+<p>Con Compose, utilizas un archivo YAML para configurar los servicios de tu aplicación. Esto permite que con un solo comando puedas crear y arrancar todos los servicios de tu configuración.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml">
+version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+  api:
+    image: mi-backend-api:1.0
+    environment:
+      - DB_HOST=db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secreta
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+</code></pre>
+</div>
+<span class="center-horizontal caption">docker-compose.yml declarando una red interna con Nginx, un backend y PostgreSQL</span>
+
+<h3>Comandos Clave</h3>
+
+<p>Para levantar toda la infraestructura definida en el YAML en segundo plano:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker-compose up -d
+</code></pre>
+</div>
+
+<p>Para detener y eliminar todos los contenedores y redes creadas por compose:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker-compose down
+</code></pre>
+</div>

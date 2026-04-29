@@ -12,3 +12,4 @@ import '../components/docker/imagenes/registro/registro.js';
 import '../components/docker/contenedores/contenedores.js';
 import '../components/docker/networking/networking.js';
 import '../components/docker/orquestacion/orquestacion.js';
+import '../components/docker/compose/compose.js';

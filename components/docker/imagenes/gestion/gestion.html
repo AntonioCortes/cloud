@@ -1,1 +1,35 @@
-<h1 class="title">Gestión de imágenes</h1>
+<h1 class="title">Gestión de Imágenes</h1>
+
+<p>Administrar las imágenes almacenadas localmente es crucial para no llenar el disco duro de tu servidor o máquina local.</p>
+
+<h3>Comandos de Gestión</h3>
+
+<p>Listar todas las imágenes descargadas o construidas localmente:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker images
+</code></pre>
+</div>
+
+<p>Inspeccionar los metadatos completos de una imagen (variables de entorno, arquitectura, capas):</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker inspect nginx:latest
+</code></pre>
+</div>
+
+<p>Eliminar una imagen específica por su nombre o ID:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker rmi nginx:latest
+</code></pre>
+</div>
+
+<h3>Limpieza Profunda (Pruning)</h3>
+<p>Con el tiempo, al construir nuevas imágenes, se generan "dangling images" (imágenes colgantes que ya no tienen etiqueta). Para liberar espacio de forma segura, ejecuta:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker image prune
+</code></pre>
+</div>
+<span class="center-horizontal caption">Añadir el flag -a eliminará toda imagen que no esté siendo usada por un contenedor.</span>

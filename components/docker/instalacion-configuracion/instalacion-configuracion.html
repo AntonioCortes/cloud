@@ -1,1 +1,53 @@
-<h1 class="title">Instalación y configuración</h1>
+<h1 class="title">Instalación y Configuración</h1>
+
+<p>Existen dos formas principales de instalar Docker dependiendo del sistema operativo y las necesidades: Docker Engine y Docker Desktop.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Opción</th>
+			<th scope="col">Descripción</th>
+			<th scope="col">Plataformas</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Docker Engine</th>
+			<td>La versión nativa de código abierto. Solo incluye el demonio y la CLI. Ideal para servidores.</td>
+			<td>Linux</td>
+		</tr>
+		<tr>
+			<th scope="row">Docker Desktop</th>
+			<td>Aplicación con interfaz gráfica. Incluye una máquina virtual ligera para correr el demonio en SO no nativos.</td>
+			<td>Windows, macOS, Linux</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Opciones de Instalación</span>
+
+<h3>Instalación en Linux (Ubuntu/Debian)</h3>
+<p>Para instalar la versión nativa de Docker Engine, se suelen usar los repositorios oficiales:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+# Actualizar e instalar dependencias
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+
+# Añadir la clave GPG oficial de Docker
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Instalar Docker Engine
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+</div>
+
+<h3>Verificación</h3>
+<p>Para confirmar que la instalación ha sido exitosa y el demonio está corriendo:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker --version
+docker info
+</code></pre>
+</div>

@@ -1,1 +1,30 @@
-<h1 class="title">Registro de imágenes</h1>
+<h1 class="title">Registro de Imágenes</h1>
+
+<p>Un Docker Registry es un sistema de almacenamiento y distribución de imágenes. <strong>Docker Hub</strong> es el registro público por defecto, pero puedes configurar registros privados (como AWS ECR o Harbor).</p>
+
+<h3>Distribución de Imágenes</h3>
+
+<p>Descargar una imagen desde el registro público:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker pull ubuntu:20.04
+</code></pre>
+</div>
+
+<p>Antes de subir tu propia imagen, necesitas autenticarte en el registro:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker login
+</code></pre>
+</div>
+
+<p>Para subir una imagen, primero debes etiquetarla (tag) con tu nombre de usuario o la URL del registro privado:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+# Renombrar/Etiquetar
+docker tag mi-app:1.0 mi-usuario/mi-app:1.0
+
+# Subir al registro
+docker push mi-usuario/mi-app:1.0
+</code></pre>
+</div>

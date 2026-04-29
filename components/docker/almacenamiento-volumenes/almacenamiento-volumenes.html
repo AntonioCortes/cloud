@@ -1,1 +1,49 @@
-<h1 class="title">Almacenamiento y volúmenes</h1>
+<h1 class="title">Almacenamiento y Volúmenes</h1>
+
+<p>Por defecto, los datos creados dentro de un contenedor son efímeros; si el contenedor se destruye, los datos se pierden. Para persistir datos, Docker ofrece diferentes mecanismos.</p>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Tipo</th>
+			<th scope="col">Características</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Volumes</th>
+			<td>Totalmente gestionados por Docker. Es la mejor opción para persistir bases de datos.</td>
+		</tr>
+		<tr>
+			<th scope="row">Bind Mounts</th>
+			<td>Mapean una ruta exacta de tu sistema anfitrión (host) dentro del contenedor. Muy útiles en desarrollo.</td>
+		</tr>
+		<tr>
+			<th scope="row">tmpfs</th>
+			<td>Almacenamiento en memoria RAM. Rápido pero se borra al detener el contenedor.</td>
+		</tr>
+	</tbody>
+</table>
+<span class="center-horizontal caption">Tipos de almacenamiento persistente</span>
+
+<h3>Uso de Volúmenes</h3>
+<p>Crear un volumen nombrado gestionado por Docker:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker volume create mi-volumen-db
+</code></pre>
+</div>
+
+<p>Lanzar un contenedor adjuntando ese volumen a la ruta interna de datos:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker run -d --name mi-bd -v mi-volumen-db:/var/lib/mysql mysql:8
+</code></pre>
+</div>
+
+<p>Limpiar volúmenes huérfanos que ya no están asociados a ningún contenedor:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker volume prune
+</code></pre>
+</div>

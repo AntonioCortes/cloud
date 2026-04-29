@@ -1,1 +1,32 @@
-<h1 class="title">Orquestación</h1>
+<h1 class="title">Orquestación: Docker Swarm</h1>
+
+<p>Mientras que Docker Compose es excelente para orquestar contenedores en una única máquina, cuando necesitas escalar tu aplicación a través de múltiples servidores (un clúster), necesitas una herramienta de orquestación más avanzada. <strong>Docker Swarm</strong> es el orquestador nativo integrado directamente en el Docker Engine.</p>
+
+<h3>Arquitectura de Swarm</h3>
+<ul>
+    <li><strong>Nodos Manager:</strong> Mantienen el estado del clúster, planifican los servicios y sirven la API de Swarm.</li>
+    <li><strong>Nodos Worker:</strong> Reciben y ejecutan tareas (contenedores) asignadas por los Managers.</li>
+</ul>
+
+<h3>Comandos Básicos de Swarm</h3>
+
+<p>Para inicializar un nuevo clúster Swarm (esto convierte la máquina actual en el primer Manager):</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker swarm init
+</code></pre>
+</div>
+
+<p>Para listar los nodos que forman parte del clúster:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker node ls
+</code></pre>
+</div>
+
+<p>Para crear un servicio replicado a lo largo del clúster:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker service create --replicas 3 --name mi-web nginx
+</code></pre>
+</div>

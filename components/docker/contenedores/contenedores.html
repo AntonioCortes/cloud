@@ -1,1 +1,42 @@
 <h1 class="title">Contenedores</h1>
+
+<p>Un contenedor es una unidad estándar de software que empaqueta código y todas sus dependencias para que la aplicación se ejecute de forma rápida y confiable de un entorno informático a otro. Es esencialmente una instancia en ejecución de una imagen de Docker.</p>
+
+<h3>Ciclo de Vida de un Contenedor</h3>
+<ul>
+    <li><strong>Created (Creado):</strong> El contenedor se ha preparado pero aún no está corriendo.</li>
+    <li><strong>Running (En ejecución):</strong> El proceso principal del contenedor está activo.</li>
+    <li><strong>Paused (Pausado):</strong> Todos los procesos del contenedor están congelados temporalmente.</li>
+    <li><strong>Stopped/Exited (Detenido):</strong> El proceso ha terminado o se ha forzado su finalización.</li>
+</ul>
+
+<h3>Comandos Básicos de Consola</h3>
+
+<p>Para crear y arrancar un contenedor nuevo (si la imagen no existe localmente, se descargará primero):</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker run -d --name mi-servidor -p 8080:80 nginx
+</code></pre>
+</div>
+<span class="center-horizontal caption">El flag -d lo corre en segundo plano (detached), y -p mapea el puerto 8080 local al 80 del contenedor.</span>
+
+<p>Para ver los contenedores que están actualmente en ejecución:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker ps
+</code></pre>
+</div>
+
+<p>Para detener un contenedor activo de forma segura:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker stop mi-servidor
+</code></pre>
+</div>
+
+<p>Para eliminar un contenedor (debe estar detenido, o usar el flag -f para forzarlo):</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">
+docker rm mi-servidor
+</code></pre>
+</div>

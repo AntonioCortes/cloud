@@ -50,6 +50,10 @@
                     "content" : "component-docker-orquestacion"
                 },
                 {
+                    "text" : "Docker Compose",
+                    "content" : "component-docker-compose"
+                },
+                {
                     "text" : "Networking",
                     "content" : "component-docker-networking"
                 },
@@ -59,6 +63,12 @@
                 }
             ]
                 
+        }
+    ],
+    "links" : [
+        {
+            "text": "Documentación Oficial Docker",
+            "href": "https://docs.docker.com/"
         }
     ]
 }
