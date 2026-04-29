@@ -15,7 +15,7 @@ Cuando el usuario te pida crear "un nuevo contenido", "una nueva sección" o "a�
 Dentro de la nueva carpeta (`components/<vista>/<nombre-nuevo-contenido>/`), crea dos archivos:
 
 **Archivo HTML (`<nombre-nuevo-contenido>.html`)**
-- Añade aquí el contenido en HTML. 
+- Añade aquí el contenido en HTML. **IMPORTANTE:** El contenido debe ser extenso, detallado y seguir un enfoque "0 to Hero". No des explicaciones escuetas; profundiza y explica los conceptos ampliamente.
 - **Reglas de estilo estrictas:**
   - Títulos principales: `<h1 class="title">Título</h1>`
   - Tablas: `<table class="table table-striped table-hover">`
