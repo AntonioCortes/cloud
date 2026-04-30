@@ -1,0 +1,100 @@
+<h1 class="title">Instalación y Configuración</h1>
+
+<p>A diferencia de sistemas complejos que requieren decenas de dependencias cruzadas, poner en marcha un servidor RabbitMQ para desarrollo local es sorprendentemente sencillo. Aunque puedes instalarlo nativamente bajando los binarios para Windows, MacOS o Linux, <strong>el estándar absoluto en la industria hoy en día es utilizar Docker.</strong></p>
+
+<h2>1. Instalación Local rápida (Vía Docker)</h2>
+<p>La forma más limpia de correr RabbitMQ es usando la imagen oficial de Docker. Existen múltiples variantes de la imagen, pero siempre debes buscar la que incluye el sufijo <code>-management</code>.</p>
+
+<p>Esta variante no solo levanta el Broker (el motor que mueve los mensajes), sino que también levanta un servidor web interno con una interfaz gráfica (GUI) que te permite visualizar tus colas, mensajes e intercambiadores en tiempo real desde tu navegador.</p>
+
+<p>Abre tu terminal y ejecuta el siguiente comando:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash">docker run -d \
+  --hostname mi-rabbit-local \
+  --name servidor-rabbitmq \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  rabbitmq:3-management</code></pre>
+</div>
+
+<h3>Entendiendo los Puertos Expuestos</h3>
+<ul>
+    <li><strong><code>-p 5672:5672</code></strong>: Este es el puerto sagrado de RabbitMQ. Es el puerto por el que se comunican las aplicaciones mediante el protocolo <strong>AMQP</strong>. El código de tus aplicaciones apuntará a este puerto.</li>
+    <li><strong><code>-p 15672:15672</code></strong>: Este es el puerto HTTP de la <strong>Interfaz de Gestión (Management UI)</strong> y la API REST administrativa.</li>
+</ul>
+
+<h2>2. Instalación Nativa (Sin Docker)</h2>
+<p>Si prefieres no utilizar Docker o estás preparando un servidor bare-metal dedicado, puedes instalar RabbitMQ directamente en tu sistema operativo. Dado que RabbitMQ está programado internamente en <strong>Erlang</strong>, el requisito previo absoluto es instalar el entorno de ejecución de Erlang antes de instalar el propio RabbitMQ.</p>
+
+<h3>En Linux (Ubuntu/Debian)</h3>
+<p>El proceso recomendado por los desarrolladores oficiales es utilizar los repositorios propios en lugar de los genéricos de la distribución, para garantizar las versiones más recientes.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># 1. Actualizar el sistema e instalar dependencias básicas
+sudo apt-get update
+sudo apt-get install curl gnupg apt-transport-https -y
+
+# 2. Instalar Erlang y RabbitMQ (Los comandos oficiales de repositorios cambian frecuentemente, 
+# pero la estructura básica mediante apt-get es la siguiente:)
+sudo apt-get install -y erlang-base \
+                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+                        erlang-runtime-tools erlang-snmp erlang-ssl \
+                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+
+sudo apt-get install rabbitmq-server -y
+
+# 3. Habilitar el servicio para que inicie siempre con el sistema y arrancarlo
+sudo systemctl enable rabbitmq-server
+sudo systemctl start rabbitmq-server
+
+# 4. Habilitar el panel de administración web (Management Plugin)
+sudo rabbitmq-plugins enable rabbitmq_management</code></pre>
+</div>
+
+<h3>En Windows</h3>
+<p>La instalación en Windows es bastante directa y se realiza a través de instaladores gráficos convencionales.</p>
+<ol>
+    <li>Descarga e instala la última versión de <strong>Erlang/OTP</strong> para Windows desde su web oficial (<code>erlang.org</code>). Ejecuta el instalador como administrador y acepta los valores por defecto.</li>
+    <li>Descarga el instalador de <strong>RabbitMQ Server</strong> para Windows desde la web oficial de RabbitMQ (<code>rabbitmq.com</code>). Ejecútalo como administrador.</li>
+    <li>Una vez instalado, RabbitMQ se registrará automáticamente como un Servicio nativo de Windows y se iniciará solo de fondo.</li>
+    <li>Para habilitar la interfaz visual (Management Plugin), abre el programa llamado "RabbitMQ Command Prompt (sbin dir)" que se ha instalado en tu menú de inicio y ejecuta: <br><code>rabbitmq-plugins enable rabbitmq_management</code></li>
+</ol>
+
+<h2>3. El Panel de Administración (Management Plugin)</h2>
+<p>Una vez que tu servidor esté corriendo (ya sea por Docker o instalación nativa), abre tu navegador web favorito y dirígete a:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-text">http://localhost:15672</code></pre>
+</div>
+
+<p>Te encontrarás con una pantalla de inicio de sesión. Por defecto, las credenciales de superadministrador son:</p>
+<ul>
+    <li><strong>Usuario:</strong> <code>guest</code></li>
+    <li><strong>Contraseña:</strong> <code>guest</code></li>
+</ul>
+
+<p><em>Nota de seguridad:</em> El usuario <code>guest</code> solo puede conectarse desde `localhost`. Si subes RabbitMQ a un servidor público en la nube, el usuario guest fallará remotamente por motivos estrictos de seguridad. Tendrás que crear un nuevo usuario administrativo usando la consola (CLI) o variables de entorno.</p>
+
+<h2>4. Configuraciones Avanzadas para Producción</h2>
+<p>Lo que hemos hecho arriba es perfecto para tu máquina local o un entorno de pruebas, pero llevar RabbitMQ a un entorno de producción serio (Alta Disponibilidad) requiere más consideraciones.</p>
+
+<h3>A. El Archivo de Configuración <code>rabbitmq.conf</code></h3>
+<p>RabbitMQ se configura mediante un archivo en formato INI llamado <code>rabbitmq.conf</code>. En él puedes ajustar parámetros críticos de red, límites de memoria y configuraciones del disco.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-ini"># Ejemplo de rabbitmq.conf
+# Bloquear la conexión de productores si RabbitMQ usa más del 40% de la RAM del servidor
+vm_memory_high_watermark.relative = 0.4
+
+# Cambiar el puerto por defecto de AMQP
+listeners.tcp.default = 5673</code></pre>
+</div>
+
+<h3>B. Clústeres de RabbitMQ (High Availability)</h3>
+<p>Un solo servidor (Nodo) es un único punto de fallo (SPOF). Si ese servidor físico se quema, tu aplicación entera colapsa y los mensajes no guardados se pierden.</p>
+
+<p>En producción, se monta un <strong>Clúster de RabbitMQ</strong> (normalmente de 3 o 5 nodos). Si usas Kubernetes, esto se logra fácilmente utilizando el <em>RabbitMQ Cluster Operator</em> oficial, que orquesta la unión de estos nodos en un clúster unificado. En este escenario, las colas se configuran como <strong>Quorum Queues</strong>, un tipo especial de cola que replica automáticamente los mensajes en varios discos de diferentes servidores mediante el algoritmo de consenso Raft.</p>
+
+<p>Con nuestro RabbitMQ corriendo, ya estamos listos para empezar a escribir código que produzca y consuma mensajes. En las siguientes secciones veremos cómo estructurar estas comunicaciones.</p>

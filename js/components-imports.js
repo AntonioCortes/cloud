@@ -1,5 +1,6 @@
 import '../components/jenkins/introduccion/introduccion.js';
 import '../components/rabbitmq/introduccion/introduccion.js';
+import '../components/rabbitmq/instalacion-configuracion/instalacion-configuracion.js';
 import '../components/kafka/introduccion/introduccion.js';
 import '../components/k8s/introduccion/introduccion.js';
 import '../components/k8s/instalacion-configuracion/instalacion-configuracion.js';

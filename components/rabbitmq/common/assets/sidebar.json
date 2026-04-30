@@ -7,64 +7,48 @@
                 {
                     "text" : "Introducción",
                     "content" : "component-rabbitmq-introduccion"
+                },
+                {
+                    "text" : "Instalación y Configuración",
+                    "content" : "component-rabbitmq-instalacion-configuracion"
                 }
             ]
         },
         {
-            "text" : "Conceptos Principales",
+            "text" : "Arquitectura AMQP",
             "contentId" : "main",
             "content" : [
                 {
-                    "text" : "Servicios",
-                    "contentId":"servicios",
-                    "content" : [
-                        {
-                            "text" : "option1",
-                            "content" : "k8s.paths.content1.opt1"
-                        },
-                        {
-                             "text" : "option2",
-                            "content" : "k8s.paths.content1.opt2"
-                        },
-                        {
-                            "text" : "option3",
-                            "content" : "k8s.paths.content1.opt3"
-                        }
-                    ]
+                    "text" : "Productores y Consumidores",
+                    "content" : "component-rabbitmq-productores-consumidores"
                 },
                 {
-                    "text" : "Minikube",
-                    "contentId":"content2",
-                    "content" : [
-                        {
-                            "text" : "opt1",
-                            "content" : "k8s.paths.content2.opt1"
-                        },
-                        {
-                             "text" : "opt2",
-                            "content" : "k8s.paths.content2.opt2"
-                        }
-                    ]
+                    "text" : "Colas (Queues)",
+                    "content" : "component-rabbitmq-colas"
                 },
                 {
-                    "text" : "Pods",
-                    "content" : "k8s.paths.content3"
+                    "text" : "Intercambiadores (Exchanges)",
+                    "content" : "component-rabbitmq-exchanges"
                 },
                 {
-                    "text" : "Tareas",
-                    "content" : "k8s.paths.content3"
+                    "text" : "Enlaces y Enrutamiento (Bindings)",
+                    "content" : "component-rabbitmq-bindings"
                 },
                 {
-                    "text" : "Despliegues",
-                    "content" : "k8s.paths.content3"
+                    "text" : "Patrones de Mensajería (Pub/Sub)",
+                    "content" : "component-rabbitmq-patrones"
                 }
             ]
         }
     ],
     "links" : [
         {
-            "text" : "***",
-            "href" : ""
+            "text": "Documentación Oficial RabbitMQ",
+            "href": "https://www.rabbitmq.com/documentation.html"
+        },
+        {
+            "text": "Tutoriales Oficiales",
+            "href": "https://www.rabbitmq.com/tutorials"
         }
     ]
 }
