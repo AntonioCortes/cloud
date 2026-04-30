@@ -7,6 +7,10 @@
                 {
                     "text" : "Introducción",
                     "content" : "component-k8s-introduccion"
+                },
+                {
+                    "text" : "Instalación y Configuración",
+                    "content" : "component-k8s-instalacion-configuracion"
                 }
             ]
         },
@@ -15,56 +19,40 @@
             "contentId" : "main",
             "content" : [
                 {
-                    "text" : "Servicios",
-                    "contentId":"servicios",
-                    "content" : [
-                        {
-                            "text" : "option1",
-                            "content" : "k8s.paths.content1.opt1"
-                        },
-                        {
-                             "text" : "option2",
-                            "content" : "k8s.paths.content1.opt2"
-                        },
-                        {
-                            "text" : "option3",
-                            "content" : "k8s.paths.content1.opt3"
-                        }
-                    ]
-                },
-                {
-                    "text" : "Minikube",
-                    "contentId":"content2",
-                    "content" : [
-                        {
-                            "text" : "opt1",
-                            "content" : "k8s.paths.content2.opt1"
-                        },
-                        {
-                             "text" : "opt2",
-                            "content" : "k8s.paths.content2.opt2"
-                        }
-                    ]
+                    "text" : "Arquitectura del Clúster",
+                    "content" : "component-k8s-arquitectura"
                 },
                 {
                     "text" : "Pods",
-                    "content" : "k8s.paths.content3"
+                    "content" : "component-k8s-pods"
                 },
                 {
-                    "text" : "Tareas",
-                    "content" : "k8s.paths.content3"
+                    "text" : "Despliegues (Deployments)",
+                    "content" : "component-k8s-deployments"
                 },
                 {
-                    "text" : "Despliegues",
-                    "content" : "k8s.paths.content3"
+                    "text" : "Servicios e Ingress",
+                    "content" : "component-k8s-servicios"
+                },
+                {
+                    "text" : "Configuración y Secretos",
+                    "content" : "component-k8s-configmaps-secrets"
+                },
+                {
+                    "text" : "Almacenamiento y Volúmenes",
+                    "content" : "component-k8s-volumenes"
                 }
             ]
         }
     ],
     "links" : [
         {
-            "text" : "***",
-            "href" : ""
+            "text": "Documentación Oficial Kubernetes",
+            "href": "https://kubernetes.io/docs/home/"
+        },
+        {
+            "text": "Minikube",
+            "href": "https://minikube.sigs.k8s.io/docs/start/"
         }
     ]
 }

@@ -1,0 +1,71 @@
+<h1 class="title">Pods: La Unidad Básica</h1>
+
+<p>Si vienes del mundo de Docker, podrías pensar que la unidad más pequeña y fundamental en Kubernetes es el contenedor (por ejemplo, un contenedor Docker corriendo Nginx). Pero esto <strong>no es cierto</strong>.</p>
+
+<p>En Kubernetes, la unidad atómica, la pieza de construcción más pequeña que puedes crear y desplegar, se llama <strong>Pod</strong>.</p>
+
+<h2>1. ¿Qué es un Pod?</h2>
+<p>Imagina un Pod como una "cápsula" o un "envoltorio" que contiene uno o más contenedores. Kubernetes gestiona esta cápsula, no los contenedores directamente.</p>
+
+<p><strong>¿Por qué Kubernetes inventó los Pods en lugar de usar contenedores directamente?</strong></p>
+<p>Porque en aplicaciones reales, a veces necesitas que varios contenedores trabajen tan íntimamente unidos que deben compartir los mismos recursos exactos. Todos los contenedores dentro de un mismo Pod comparten:</p>
+<ul>
+    <li><strong>El mismo espacio de Red:</strong> Todos comparten la misma dirección IP y los mismos puertos (localhost). Si tienes un contenedor web en el puerto 8080 y una base de datos auxiliar en el puerto 5432 dentro del <em>mismo</em> Pod, el contenedor web puede hablar con la base de datos haciendo ping a <code>localhost:5432</code>.</li>
+    <li><strong>El mismo espacio de Almacenamiento:</strong> Todos los contenedores en un Pod pueden acceder a los mismos volúmenes de disco compartidos. Si un contenedor procesa un archivo y lo guarda en una carpeta, el otro contenedor puede leerlo instantáneamente.</li>
+    <li><strong>El mismo Ciclo de Vida:</strong> Arrancan juntos, se despliegan en la misma máquina física (Worker Node) obligatoriamente, y si el Pod muere, todos los contenedores dentro mueren a la vez.</li>
+</ul>
+
+<h3>El patrón más común: 1 Pod = 1 Contenedor</h3>
+<p>A pesar de que un Pod *puede* tener varios contenedores, el 90% del tiempo seguirás el modelo "un contenedor por Pod". Si quieres escalar tu aplicación porque tienes mucho tráfico, <strong>no metes más contenedores en tu Pod</strong>, lo que haces es pedirle a Kubernetes que cree <strong>más Pods idénticos</strong> (réplicas).</p>
+
+<h2>2. Creando un Pod (El Enfoque Declarativo)</h2>
+<p>Aunque puedes crear un Pod usando comandos imperativos en la terminal (<code>kubectl run mi-pod --image=nginx</code>), la manera correcta y profesional de trabajar en Kubernetes es mediante archivos YAML. Esto nos permite tener nuestro estado como código, versionable en Git.</p>
+
+<p>Aquí tienes el archivo YAML más básico para desplegar un servidor web Nginx:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml"># archivo: mi-primer-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: servidor-web
+  labels:
+    entorno: produccion
+spec:
+  containers:
+  - name: nginx-contenedor
+    image: nginx:latest
+    ports:
+    - containerPort: 80</code></pre>
+</div>
+<span class="center-horizontal caption">La anatomía clásica: Definimos la API, el 'kind' (tipo de objeto), la 'metadata' (nombres y etiquetas) y las 'spec' (las especificaciones de los contenedores).</span>
+
+<h2>3. Interactuando con los Pods: Comandos Esenciales</h2>
+<p>Una vez que tienes tu archivo YAML, utilizas la herramienta <code>kubectl</code> para enviarlo al clúster:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># 1. Aplicar el archivo (Kubernetes creará el Pod)
+kubectl apply -f mi-primer-pod.yaml
+
+# 2. Listar todos los Pods en tu clúster
+kubectl get pods
+
+# 3. Ver los detalles completos de un Pod específico (muy útil para depurar)
+kubectl describe pod servidor-web
+
+# 4. Ver los logs (lo que imprime la aplicación en la terminal)
+kubectl logs servidor-web
+
+# 5. Entrar a la terminal del contenedor (como si hicieras SSH)
+kubectl exec -it servidor-web -- /bin/bash
+
+# 6. Borrar el Pod
+kubectl delete pod servidor-web</code></pre>
+</div>
+
+<h2>4. El Problema de los Pods Solitarios (Bare Pods)</h2>
+<p>Crear un Pod directamente con un archivo YAML de tipo <code>kind: Pod</code> (como hicimos arriba) es excelente para aprender, pero <strong>nunca se hace en producción</strong>.</p>
+
+<p>¿Por qué? Porque los Pods son mortales y efímeros. Si el servidor físico (Nodo) donde está corriendo tu Pod se apaga por un corte de luz, tu Pod muere. Y lo más importante: <strong>Kubernetes NO lo va a resucitar automáticamente</strong>.</p>
+
+<p>Para conseguir esa "magia" de auto-sanación y escalado automático que hace famoso a Kubernetes, nunca desplegamos Pods desnudos. En su lugar, desplegamos <strong>Deployments</strong>, que son objetos de un nivel superior que envuelven y gestionan los Pods por nosotros. Lo veremos en la siguiente sección.</p>

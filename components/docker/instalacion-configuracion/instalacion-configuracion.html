@@ -1,36 +1,124 @@
-<h1 class="title">Instalación Avanzada y Configuración</h1>
+<h1 class="title">Instalación y Configuración de Docker</h1>
 
-<p>Instalar Docker parece sencillo (un simple instalador o `apt-get`), pero entender su arquitectura interna es lo que te diferencia de un principiante. Docker funciona bajo un modelo Cliente-Servidor comunicándose a través de un <strong>socket UNIX</strong>.</p>
+<p>Instalar Docker puede variar enormemente dependiendo del sistema operativo y del propósito de la máquina (un entorno de producción vs. tu ordenador personal para desarrollo). En esta guía detallada, exploraremos paso a paso cómo instalar y configurar Docker desde cero, culminando con la ejecución de tu primer contenedor: el clásico <strong>Hello World</strong>.</p>
 
-<h3>Arquitectura del Demonio</h3>
-<p>En Linux, el cliente (la CLI `docker`) se comunica con el demonio (dockerd) a través de `/var/run/docker.sock`. Este archivo es sumamente poderoso: cualquier usuario con acceso a este socket tiene permisos equivalentes a `root` en la máquina anfitriona.</p>
+<p>A nivel interno, Docker funciona con una arquitectura Cliente-Servidor. El cliente (lo que tú escribes en la terminal) se comunica con el demonio de Docker (el servidor que hace el trabajo pesado) normalmente a través de un socket UNIX (en Linux) o un <em>named pipe</em> (en Windows). Entender esto es fundamental para comprender los permisos y el funcionamiento de la herramienta.</p>
+
+<h2>1. Instalación en Linux</h2>
+<p>Linux es el ecosistema natural de Docker. Los contenedores comparten el núcleo (kernel) del sistema operativo anfitrión, lo que los hace increíblemente ligeros y rápidos. Podemos considerar esta instalación la forma más "pura" de usar Docker.</p>
+
+<h3>1.1. Para Ordenadores Personales (Entornos de Desarrollo)</h3>
+<p>Si usas Linux como tu sistema operativo de escritorio diario (por ejemplo, Ubuntu Desktop) y quieres empezar a desarrollar, la forma más sencilla y moderna es utilizar <strong>Docker Desktop para Linux</strong>. Esta herramienta incluye una interfaz gráfica (GUI) que facilita enormemente la gestión de contenedores, imágenes y volúmenes, además de incluir herramientas adicionales muy útiles como Docker Compose o un clúster de Kubernetes preconfigurado.</p>
+
+<ol>
+  <li>Descarga el paquete <code>.deb</code> (para Ubuntu/Debian) o <code>.rpm</code> (para Fedora/RedHat) desde la página oficial de Docker.</li>
+  <li>Instala el paquete utilizando el gestor de paquetes de tu distribución. Por ejemplo, en Ubuntu:</li>
+</ol>
 
 <div class="center-horizontal">
-<pre><code class="language-bash">
-# Instalación recomendada en servidores de producción (Linux)
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Añadir tu usuario al grupo 'docker' para no usar sudo (CUIDADO: Equivale a root)
-sudo usermod -aG docker $USER
-</code></pre>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install ./docker-desktop-&lt;version&gt;-amd64.deb</code></pre>
 </div>
 
-<h3>El archivo daemon.json</h3>
-<p>Para configuraciones avanzadas a nivel de servidor (como configurar DNS personalizados, proxies o rotación automática de logs), no usamos parámetros en la consola. Editamos el archivo <code>/etc/docker/daemon.json</code>.</p>
+<p>Es importante saber que Docker Desktop en Linux ejecuta una máquina virtual ligera de fondo para proporcionar un entorno totalmente consistente, lo que significa que aísla los recursos del sistema principal de forma más estricta que la instalación nativa del Engine.</p>
+
+<h3>1.2. Para Entornos de Producción (Servidores Headless)</h3>
+<p>En un servidor en la nube (como una instancia EC2 en AWS, una VM en Azure o un VPS clásico) donde no hay interfaz gráfica (son entornos <em>headless</em>), queremos instalar únicamente el motor puro: <strong>Docker Engine</strong>. Queremos evitar la sobrecarga de una máquina virtual y usar la potencia bruta del sistema operativo del servidor.</p>
+
+<p>La manera oficial y recomendada de instalar Docker Engine en Linux (el ejemplo asume Ubuntu/Debian) es mediante el repositorio oficial de Apt:</p>
 
 <div class="center-horizontal">
-<pre><code class="language-json">
-{
+<pre><code class="language-bash"># 1. Actualizar el índice de paquetes e instalar dependencias base
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+
+# 2. Añadir la clave GPG oficial de Docker para verificar la autenticidad
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# 3. Añadir el repositorio oficial a las fuentes de Apt
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 4. Instalar Docker Engine y sus plugins (como Compose)
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</code></pre>
+</div>
+
+<h4>Configuración Post-Instalación Crítica (Linux)</h4>
+<p>Por defecto, el demonio de Docker requiere privilegios de <code>root</code> para ejecutarse. Si intentas ejecutar el comando <code>docker run</code> sin usar <code>sudo</code>, obtendrás un error de "Permisos Denegados". Para evitar tener que escribir <code>sudo</code> cada vez y agilizar tu flujo de trabajo de forma segura:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># Crear el grupo docker (normalmente se crea en la instalación, pero por si acaso)
+sudo groupadd docker
+
+# Añadir tu usuario actual al grupo docker
+sudo usermod -aG docker $USER
+
+# Aplica los cambios de sesión inmediatamente (o simplemente cierra sesión y vuelve a entrar)
+newgrp docker</code></pre>
+</div>
+<span class="center-horizontal caption">Nota de seguridad: Cualquier usuario que pertenezca al grupo 'docker' tiene privilegios equivalentes a 'root' en la máquina anfitriona. Esto es ideal para desarrollo local, pero requiere precaución extrema en servidores compartidos.</span>
+
+<h2>2. Instalación en Windows</h2>
+<p>A diferencia de Linux, el núcleo (kernel) de Windows es completamente diferente. Dado que la inmensa mayoría de los contenedores están basados en Linux, para correrlos en Windows necesitamos una capa de virtualización que traduzca o ejecute un núcleo de Linux.</p>
+
+<h3>2.1. Para Ordenadores Personales (Entornos de Desarrollo)</h3>
+<p>La herramienta indiscutible en este escenario es <strong>Docker Desktop para Windows</strong>. Históricamente, utilizaba una máquina virtual pesada tradicional con Hyper-V, pero hoy en día la recomendación y estándar de la industria es utilizar <strong>WSL 2 (Windows Subsystem for Linux 2)</strong>.</p>
+
+<p>Piensa en WSL 2 como un kernel de Linux real incrustado orgánicamente dentro de Windows, extremadamente rápido y que permite un acceso casi nativo a los archivos del sistema. Docker aprovecha este motor de fondo para ejecutar contenedores Linux a velocidades impresionantes.</p>
+
+<ol>
+  <li><strong>Prerrequisito vital:</strong> Instala WSL 2. Abre una terminal de PowerShell como Administrador y ejecuta: <code>wsl --install</code>. Tras esto, reinicia tu equipo.</li>
+  <li>Descarga el instalador de Docker Desktop para Windows desde su web oficial (<a href="https://docs.docker.com/desktop/install/windows-install/" target="_blank">docs.docker.com</a>).</li>
+  <li>Ejecuta el instalador. Asegúrate de que la casilla que dice <strong>"Use WSL 2 instead of Hyper-V"</strong> esté marcada durante la instalación.</li>
+  <li>Una vez instalado, abre la aplicación. Tendrás un icono de una ballena en la bandeja del sistema (abajo a la derecha) indicando que el motor está arrancando (en color verde cuando esté listo).</li>
+</ol>
+
+<h3>2.2. Para Entornos de Producción Windows</h3>
+<p>Aunque la mayoría de los servidores corren en Linux, existen entornos empresariales puramente Windows. En servidores de producción basados en Windows Server, <strong>no se instala Docker Desktop</strong> (ya que incluye componentes gráficos y restricciones de licencia para empresas grandes).</p>
+
+<p>En su lugar, para ejecutar aplicaciones nativas de Windows Server en contenedores, se utiliza <strong>Mirantis Container Runtime</strong> (anteriormente conocido como Docker Engine Enterprise). Si solo necesitas el motor puro en un entorno de desarrollo dentro de Windows Server, se utiliza PowerShell para instalar el proveedor nativo, el cual permite aislar aplicaciones usando <em>Windows Containers</em> exclusivamente (no Linux).</p>
+
+<h2>3. Configuración Avanzada: El archivo daemon.json</h2>
+<p>Tanto en Linux como en Windows, el "cerebro" de las operaciones (el demonio de Docker) puede configurarse de manera sumamente precisa utilizando un archivo de texto en formato JSON llamado <code>daemon.json</code>.</p>
+<ul>
+    <li>En Linux, se ubica en: <code>/etc/docker/daemon.json</code></li>
+    <li>En Windows (con Docker Desktop), puedes acceder a él directamente desde los ajustes (Settings > Docker Engine) en la interfaz gráfica.</li>
+</ul>
+
+<p>Una configuración extremadamente común (y recomendada en producción) es establecer políticas de rotación para los logs. Si no lo haces, un contenedor con errores que imprima texto constantemente puede agotar todo el espacio de tu disco duro y tirar el servidor abajo:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-json">{
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "10m",
     "max-file": "3"
-  },
-  "default-address-pools": [
-    {"base": "10.200.0.0/16", "size": 24}
-  ]
-}
-</code></pre>
+  }
+}</code></pre>
 </div>
-<span class="center-horizontal caption">Ejemplo: Limitando los logs para que no llenen el disco duro y cambiando la subred por defecto.</span>
+<span class="center-horizontal caption">Ejemplo de configuración: Limita los logs a un máximo de 3 archivos de 10 Megabytes por contenedor, garantizando que el almacenamiento nunca se llene.</span>
+
+<h2>4. Tu Primer Contenedor: Ejecutando "Hello World"</h2>
+<p>Con Docker ya instalado y configurado correctamente, es el momento de poner a prueba la instalación. El rito de iniciación universal en Docker es descargar y ejecutar la imagen oficial llamada <code>hello-world</code>.</p>
+
+<p>Abre tu terminal preferida (Bash, Zsh, o PowerShell) y ejecuta el siguiente comando exacto:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash">docker run hello-world</code></pre>
+</div>
+
+<p><strong>¿Qué magia acaba de suceder bajo el capó?</strong></p>
+<ol>
+  <li>El <strong>Cliente Docker</strong> (la herramienta de la línea de comandos a la que llamaste escribiendo <code>docker</code>) contactó con el <strong>Demonio Docker</strong> en segundo plano.</li>
+  <li>El demonio buscó la imagen "hello-world" en tu disco duro local (tu caché).</li>
+  <li>Al no encontrarla porque es una instalación nueva, el demonio salió a internet para contactar con <strong>Docker Hub</strong> (el registro público oficial) y descargó la imagen.</li>
+  <li>Una vez descargada, el demonio creó un nuevo contenedor basado en esa imagen.</li>
+  <li>El contenedor se ejecutó, el programa interno emitió el mensaje de saludo en tu pantalla y luego el contenedor finalizó su ejecución instantáneamente, ya que esa era su única misión.</li>
+</ol>
+
+<p>Si la salida en tu consola muestra un texto que comienza por <em>"Hello from Docker! This message shows that your installation appears to be working correctly."</em>, ¡enhorabuena! Tienes un entorno Docker completamente funcional y estás listo para adentrarte en el mundo de la contenedorización.</p>

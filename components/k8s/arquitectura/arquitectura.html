@@ -1,0 +1,56 @@
+<h1 class="title">Arquitectura del Clúster</h1>
+
+<p>Para entender verdaderamente Kubernetes, necesitamos saber qué ocurre "bajo el capó". Un clúster de Kubernetes no es una caja mágica; es un conjunto de máquinas (físicas o virtuales) que asumen dos roles muy específicos: el <strong>Plano de Control (Master Nodes)</strong> y el <strong>Plano de Datos (Worker Nodes)</strong>.</p>
+
+<h2>1. El Plano de Control (Control Plane)</h2>
+<p>El Plano de Control es el cerebro del clúster. Toma las decisiones globales (por ejemplo, planificar cuándo arrancar un nuevo contenedor) y detecta y responde a los eventos del clúster (como arrancar un contenedor de reemplazo cuando uno falla). En producción, los componentes del plano de control suelen ejecutarse en máquinas dedicadas llamadas <em>Master Nodes</em>.</p>
+
+<p>Los componentes principales del Plano de Control son:</p>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Componente</th>
+            <th>¿Qué hace? (Explicación sencilla)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>kube-apiserver</strong></td>
+            <td>Es la puerta de entrada principal. Cuando escribes `kubectl get pods`, tu ordenador habla con el API Server. Todo en K8s, desde los trabajadores internos hasta nosotros, se comunica a través del API Server.</td>
+        </tr>
+        <tr>
+            <td><strong>etcd</strong></td>
+            <td>Es el "disco duro" del cerebro. Es una base de datos clave-valor ultra rápida y altamente disponible. Aquí se guarda *absolutamente toda* la configuración y el estado actual del clúster. Si pierdes el etcd, pierdes el clúster entero.</td>
+        </tr>
+        <tr>
+            <td><strong>kube-scheduler</strong></td>
+            <td>El planificador. Su único trabajo es vigilar los nuevos contenedores que piden ser ejecutados y decidir en qué máquina (Worker Node) específica ponerlos basándose en la CPU y RAM disponibles, reglas de afinidad, etc.</td>
+        </tr>
+        <tr>
+            <td><strong>kube-controller-manager</strong></td>
+            <td>El "vigilante". Son múltiples procesos corriendo en bucle infinito que observan el estado actual y lo comparan con el estado deseado. Si pides 3 réplicas de una app y detecta que solo hay 2 vivas, el Controller Manager lanza la orden para crear otra.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>2. Nodos Trabajadores (Worker Nodes)</h2>
+<p>Si el Plano de Control es el director de la orquesta, los Worker Nodes son los músicos. Son las máquinas que realmente ejecutan el código de tu aplicación. Un clúster puede tener desde un solo Worker Node (como en Minikube) hasta decenas de miles.</p>
+
+<p>Cada Nodo Trabajador tiene 3 componentes fundamentales:</p>
+
+<ul>
+    <li><strong>kubelet:</strong> Es el agente o "capataz" del nodo. Recibe órdenes del API Server (ej: "Asegúrate de que este contenedor de Nginx esté corriendo aquí") y se encarga de cumplirlas. Monitorea constantemente los contenedores y reporta su estado de vuelta al cerebro.</li>
+    <li><strong>kube-proxy:</strong> El guardián de las reglas de red. Mantiene la comunicación de red en tu clúster. Se encarga de actualizar las reglas del firewall local del servidor (usualmente usando <em>iptables</em> en Linux) para que el tráfico de red llegue al contenedor correcto, incluso si este contenedor cambió de servidor.</li>
+    <li><strong>Container Runtime:</strong> Es el software responsable de ejecutar los contenedores reales. En el pasado, esto solía ser únicamente Docker, pero hoy en día el estándar de la industria es <strong>containerd</strong> o <strong>CRI-O</strong>. El `kubelet` le dice al runtime "descarga esta imagen y ejecútala".</li>
+</ul>
+
+<h2>Resumen del Flujo</h2>
+<p>Imagina que quieres desplegar tu aplicación web. Este es el camino que recorre tu orden:</p>
+<ol>
+    <li>Escribes tu archivo YAML definiendo tu estado deseado y ejecutas <code>kubectl apply -f archivo.yaml</code>.</li>
+    <li>El <strong>API Server</strong> recibe la petición, la valida y guarda ese "deseo" en la base de datos <strong>etcd</strong>.</li>
+    <li>El <strong>kube-scheduler</strong> detecta que hay un nuevo contenedor esperando ser asignado, revisa qué Nodo Trabajador tiene recursos libres y toma una decisión. Guarda esta decisión de vuelta en el API Server.</li>
+    <li>El <strong>kubelet</strong> del Nodo Trabajador elegido se da cuenta de que le han asignado trabajo. Habla con su <strong>Container Runtime</strong> (ej. containerd) para descargar la imagen y arrancar el contenedor.</li>
+    <li>El <strong>kubelet</strong> le avisa al API Server: <em>"¡Trabajo completado, el contenedor está corriendo!"</em>.</li>
+</ol>

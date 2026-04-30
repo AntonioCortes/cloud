@@ -1,0 +1,101 @@
+<h1 class="title">Instalación y Configuración (Clúster Local y Producción)</h1>
+
+<p>Instalar Kubernetes no es como instalar un simple programa (como Word o un navegador). Kubernetes es un <strong>sistema distribuido</strong> complejo compuesto por múltiples nodos (servidores). Instalar un clúster de producción desde cero ("the hard way") implica configurar certificados TLS, red virtual (CNI), un almacén distribuido (etcd) y configurar los agentes (kubelet) y demonios manualmente.</p>
+
+<p>Afortunadamente, para aprender y desarrollar, existen excelentes herramientas que encapsulan toda esa complejidad en nuestra propia máquina local.</p>
+
+<h2>1. La Herramienta Universal: kubectl</h2>
+<p>Antes de arrancar ningún clúster, necesitamos la herramienta con la que nos comunicaremos con él. Esta herramienta se llama <strong>kubectl</strong> (pronunciado <em>kube-control</em> o <em>kube-c-t-l</em>).</p>
+
+<p><code>kubectl</code> es el cliente de línea de comandos de Kubernetes. A través de él, enviamos los archivos YAML o comandos directos al plano de control (Control Plane) del clúster.</p>
+
+<h3>Instalación de kubectl (Linux)</h3>
+<p>Para descargar la última versión binaria y hacerla ejecutable:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash"># Descargar el binario
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# Dar permisos de ejecución
+chmod +x ./kubectl
+
+# Mover el binario al PATH del sistema
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+# Verificar la instalación
+kubectl version --client</code></pre>
+</div>
+
+<h2>2. Entorno de Desarrollo Local: Minikube</h2>
+<p>Si quieres probar K8s en tu PC, no vas a comprar 5 ordenadores para montar un clúster. Utilizaremos <strong>Minikube</strong>. Minikube levanta rápidamente un clúster de Kubernetes de un solo nodo (donde el Master y el Worker residen en la misma máquina virtual o contenedor) en tu ordenador local.</p>
+
+<p><em>Nota: Existen otras alternativas muy populares como <strong>Kind</strong> (Kubernetes in Docker) o <strong>K3s</strong> (versión ultra ligera de K8s), pero Minikube es el estándar académico más adoptado.</em></p>
+
+<h3>Prerrequisitos</h3>
+<ul>
+    <li>Tener instalado un hipervisor (VirtualBox, Hyper-V) o un gestor de contenedores (Docker). Utilizaremos <strong>Docker</strong> por ser más ligero.</li>
+    <li>Mínimo 2 CPUs y 2GB de memoria libre.</li>
+</ul>
+
+<h3>Instalación de Minikube (Linux)</h3>
+<div class="center-horizontal">
+<pre><code class="language-bash"># Descargar e instalar Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube</code></pre>
+</div>
+
+<h3>Arrancando tu Clúster Local</h3>
+<p>Con Minikube y Docker instalados, iniciar tu clúster personal es tan sencillo como ejecutar:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># Iniciamos indicando que use Docker como motor interno
+minikube start --driver=docker</code></pre>
+</div>
+
+<p>Verás en pantalla cómo Minikube descarga una imagen, arranca el contenedor, genera los certificados de seguridad y configura automáticamente <code>kubectl</code> para que apunte a este nuevo clúster.</p>
+
+<h3>Verificando el clúster</h3>
+<p>Ejecuta tu primer comando contra el clúster:</p>
+<div class="center-horizontal">
+<pre><code class="language-bash">kubectl get nodes</code></pre>
+</div>
+<p>Deberías ver un nodo llamado `minikube` con el estatus `Ready`. ¡Felicidades! Ya tienes Kubernetes en tu máquina.</p>
+
+<h2>3. Entornos de Producción: Una visión general</h2>
+<p>Minikube es exclusivo para desarrollo local. Nunca debes usarlo en producción. Cuando se trata de montar K8s en un entorno real, la industria se divide en dos grandes enfoques:</p>
+
+<h3>A. Clústeres Gestionados (Cloud) - El Enfoque Moderno</h3>
+<p>Montar, asegurar y mantener el <em>Control Plane</em> (los nodos maestros) es sumamente difícil. Por ello, lo más común en las empresas es utilizar servicios gestionados donde el proveedor de nube te administra el Maestro, y tú solo gestionas (y pagas) por los nodos Trabajadores.</p>
+<ul>
+    <li><strong>EKS (Elastic Kubernetes Service)</strong>: El servicio de AWS.</li>
+    <li><strong>GKE (Google Kubernetes Engine)</strong>: El de Google Cloud (pioneros y el más avanzado).</li>
+    <li><strong>AKS (Azure Kubernetes Service)</strong>: La solución de Microsoft.</li>
+</ul>
+<p>Con estos servicios, no instalas Kubernetes manualmente; haces unos cuantos clics en una interfaz o usas herramientas como Terraform, y en 10 minutos tienes un clúster de grado militar listo.</p>
+
+<h3>B. Clústeres Bare Metal o Auto-gestionados: kubeadm</h3>
+<p>Si tienes tus propios servidores físicos (Bare metal) y no usas la nube pública, debes montar K8s desde cero. La herramienta estándar para inicializar clústeres a nivel de producción es <strong>kubeadm</strong>.</p>
+<p>El flujo básico (muy simplificado) con `kubeadm` requiere instalar primero Docker/containerd en todos los servidores y luego:</p>
+<ol>
+    <li>Ejecutar <code>kubeadm init</code> en el servidor principal para arrancar el Máster. Esto genera un Token criptográfico de unión.</li>
+    <li>Instalar y configurar un proveedor de red de pods (ej: Calico, Flannel).</li>
+    <li>Ir a los otros servidores (Trabajadores) y ejecutar <code>kubeadm join &lt;IP-del-Master&gt; --token &lt;Token&gt;</code> para que se unan al clúster maestro de forma segura.</li>
+</ol>
+
+<h2>4. Tu Primer Despliegue en Minikube</h2>
+<p>A modo de "Hello World" en K8s, vamos a desplegar un servidor web simple (Nginx) y a exponerlo localmente.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># 1. Crear un despliegue llamado "hola-web" con la imagen de Nginx
+kubectl create deployment hola-web --image=nginx
+
+# 2. Comprobar que el Pod se ha creado
+kubectl get pods
+
+# 3. Exponer ese despliegue en un puerto local para poder verlo en nuestro navegador
+kubectl expose deployment hola-web --type=NodePort --port=80
+
+# 4. Magia de Minikube: Nos da una URL accesible para ver nuestro Nginx
+minikube service hola-web</code></pre>
+</div>
+
+<p>Si se abre el navegador con la pantalla de bienvenida de Nginx, tu clúster de Kubernetes está operando a la perfección y orquestando tu primer contenedor.</p>

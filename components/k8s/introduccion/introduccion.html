@@ -1,1 +1,94 @@
 <h1 class="title">Introducción a Kubernetes</h1>
+
+<p>Bienvenidos al mundo de <strong>Kubernetes</strong> (a menudo abreviado como <strong>K8s</strong> por sus 8 letras entre la "K" y la "s"). Si ya conoces Docker y cómo empaquetar tu aplicación en un contenedor, estás listo para el siguiente gran paso. Kubernetes es el estándar de la industria (el rey absoluto) para la <strong>orquestación de contenedores</strong>.</p>
+
+<p>Pero, ¿qué significa realmente "orquestar" contenedores? ¿Por qué no nos basta con simplemente hacer un <code>docker run</code> en nuestro servidor?</p>
+
+<h2>1. El Problema: El Mundo antes de Kubernetes</h2>
+<p>Imagina que tienes una aplicación web empaquetada en un contenedor Docker y la despliegas en un servidor. Todo funciona de maravilla. Sin embargo, tu aplicación se vuelve viral. Un solo contenedor ya no puede manejar el tráfico, así que decides arrancar 10 contenedores de la misma aplicación.</p>
+
+<p>De repente, te enfrentas a una serie de problemas críticos en producción:</p>
+<ul>
+    <li><strong>Balanceo de Carga:</strong> ¿Cómo distribuyes el tráfico de usuarios entre esos 10 contenedores de forma equitativa?</li>
+    <li><strong>Alta Disponibilidad (Auto-sanación):</strong> ¿Qué pasa si el servidor físico donde están corriendo 3 de esos contenedores se apaga de repente? ¿Quién se da cuenta y los vuelve a arrancar en otro servidor vivo de forma automática?</li>
+    <li><strong>Escalabilidad:</strong> ¿Cómo le dices a tu infraestructura "añade 5 contenedores más si el uso de CPU pasa del 80%" y "bórralos cuando baje el tráfico a las 3 AM"?</li>
+    <li><strong>Actualizaciones sin tiempo de inactividad (Zero Downtime):</strong> ¿Cómo actualizas la versión de tu aplicación en los 10 contenedores sin que los usuarios noten un corte en el servicio?</li>
+</ul>
+
+<p>Resolver todo esto con <em>scripts bash</em> o de forma manual es una pesadilla de mantenimiento. Aquí es donde entra el orquestador.</p>
+
+<h2>2. La Solución: ¿Qué es Kubernetes?</h2>
+<p>Nacido originalmente en Google (basado en su sistema interno llamado Borg) y ahora mantenido por la Cloud Native Computing Foundation (CNCF), <strong>Kubernetes es un sistema de código abierto para automatizar el despliegue, el escalado y la gestión de aplicaciones en contenedores.</strong></p>
+
+<p>Piensa en Kubernetes como el director de una orquesta sinfónica. Tienes muchos músicos (tus contenedores/servidores), y si cada uno toca lo que quiere, es un desastre. Kubernetes es el director que se asegura de que todos entren a tiempo, que si un violinista se enferma, sea reemplazado inmediatamente, y que la melodía fluya perfectamente.</p>
+
+<h3>Características Principales (Por qué amamos K8s)</h3>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Característica</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Descubrimiento de servicios y Balanceo de Carga</strong></td>
+            <td>K8s expone un contenedor usando un nombre DNS o su propia dirección IP. Si el tráfico es alto, K8s balancea la carga automáticamente para estabilizar el despliegue.</td>
+        </tr>
+        <tr>
+            <td><strong>Orquestación de almacenamiento</strong></td>
+            <td>Monta automáticamente el sistema de almacenamiento de tu elección, ya sea local o de proveedores públicos como AWS (EBS), GCP o Azure.</td>
+        </tr>
+        <tr>
+            <td><strong>Rollouts y Rollbacks automatizados</strong></td>
+            <td>Puedes describir el estado deseado de tus contenedores. K8s cambiará el estado actual al estado deseado a un ritmo controlado (ej: actualizando contenedores 1 por 1 para no tirar el sistema). Si algo falla, puede hacer un <em>rollback</em> a la versión anterior.</td>
+        </tr>
+        <tr>
+            <td><strong>Empaquetamiento bin-packing automático</strong></td>
+            <td>Le dices a K8s cuánta CPU y memoria RAM necesita cada contenedor. Él decide en qué nodo (servidor) colocarlo para maximizar los recursos sin colapsar el sistema.</td>
+        </tr>
+        <tr>
+            <td><strong>Auto-reparación (Self-healing)</strong></td>
+            <td>Reinicia los contenedores que fallan, reemplaza los que mueren, y mata aquellos que no responden a tus chequeos de salud definidos (Health Checks).</td>
+        </tr>
+        <tr>
+            <td><strong>Gestión de secretos y configuración</strong></td>
+            <td>K8s almacena y gestiona información sensible (contraseñas, tokens OAuth, llaves SSH). Puedes desplegar secretos sin reconstruir tus imágenes y sin exponerlos en la configuración pública.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. Enfoque Declarativo vs Imperativo</h2>
+<p>Una de las claves para dominar Kubernetes es entender su naturaleza <strong>declarativa</strong>. En lugar de darle comandos imperativos paso a paso (ej: <em>"crea una máquina, luego descarga la imagen, luego arranca el contenedor en el puerto 80"</em>), tú le declaras un <strong>Estado Deseado</strong> mediante archivos YAML.</p>
+
+<p>Le dices a Kubernetes: <em>"Quiero que existan exactamente 3 réplicas de mi servidor web corriendo en el puerto 80."</em> Kubernetes lee tu deseo y se pone a trabajar en un bucle infinito (Control Loop) comparando el estado actual con tu estado deseado. Si un servidor se cae y quedan 2 réplicas, Kubernetes nota la diferencia y automáticamente crea el tercer contenedor para cumplir tu declaración.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml"># Un vistazo rápido a la magia declarativa (Un Deployment básico)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-aplicacion-web
+spec:
+  replicas: 3 # ¡Estado deseado!
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80</code></pre>
+</div>
+<span class="center-horizontal caption">Archivo YAML típico. Kubernetes se encarga de que la realidad coincida con este archivo.</span>
+
+<h2>4. Resumen y Siguientes Pasos</h2>
+<p>Kubernetes no es una herramienta para arrancar un contenedor en tu ordenador portátil para jugar. Es una plataforma robusta, compleja y altamente resiliente diseñada para ejecutar arquitecturas de microservicios masivas en clústeres de servidores (ya sean en tu centro de datos o en la nube pública).</p>
+
+<p>En las siguientes secciones, aprenderemos a instalar un clúster de prueba en nuestro ordenador, exploraremos su arquitectura interna (Nodos Maestros y Trabajadores), y profundizaremos en sus recursos fundamentales como Pods, Deployments y Servicios.</p>

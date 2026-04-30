@@ -1,0 +1,79 @@
+<h1 class="title">Almacenamiento y Volúmenes</h1>
+
+<p>Ya dominamos cómo mantener nuestros Pods vivos (Deployments), cómo comunicarlos (Servicios) y cómo configurarlos (ConfigMaps). Pero queda el desafío técnico más complejo en el mundo de los contenedores: <strong>los datos (el estado)</strong>.</p>
+
+<p>Por diseño, los contenedores y los Pods son entidades "sin estado" (<em>Stateless</em>). Su sistema de archivos es efímero. Esto significa que si tienes una base de datos MySQL corriendo en un Pod, escribes 100 registros, y ese Pod se reinicia (por un fallo o una actualización), <strong>tus 100 registros desaparecen para siempre</strong>. K8s levanta un Pod nuevo y limpio.</p>
+
+<p>Para solucionar esto, Kubernetes utiliza el subsistema de Volúmenes (Volumes), que permite que los datos sobrevivan a la muerte de un Pod.</p>
+
+<h2>1. Volúmenes Básicos</h2>
+<p>Un volumen en Kubernetes es básicamente un directorio (con o sin datos dentro) accesible para los contenedores de un Pod. Hay decenas de tipos de volúmenes, por ejemplo:</p>
+
+<ul>
+    <li><strong>emptyDir:</strong> Crea un directorio vacío cuando el Pod es asignado a un Nodo. Los contenedores en ese Pod pueden leer y escribir ahí para compartir información. Si el Pod es eliminado del Nodo, el emptyDir se borra. (No sirve para bases de datos, pero sí para cachés temporales).</li>
+    <li><strong>hostPath:</strong> Monta un archivo o directorio directo del disco duro del Servidor (Worker Node) al Pod. Es peligroso en K8s, porque si el Pod muere y el Deployment lo levanta en *otro* Servidor distinto, ya no encontrará los datos.</li>
+</ul>
+
+<h2>2. El Estándar de Oro: PersistentVolumes (PV) y PersistentVolumeClaims (PVC)</h2>
+<p>Para aplicaciones de producción que necesitan retener datos para siempre de forma segura (como bases de datos), Kubernetes introduce un sistema de dos pasos para desacoplar el almacenamiento físico de los Pods que lo consumen.</p>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Explicación Analógica</th>
+            <th>Qué es en la realidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>PersistentVolume (PV)</strong></td>
+            <td>Un trozo de disco duro físico listo para ser usado (Ej: un disco de 50GB en AWS EBS o un disco SSD de red).</td>
+            <td>Es un recurso del clúster creado por el administrador. Existe independientemente de cualquier Pod.</td>
+        </tr>
+        <tr>
+            <td><strong>PersistentVolumeClaim (PVC)</strong></td>
+            <td>Un "ticket de reclamo" que dice: <em>"Necesito un disco de 10GB de tipo rápido, por favor"</em>.</td>
+            <td>Es la petición que hace el desarrollador. Kubernetes busca un PV que cumpla las características y lo "ata" (bind) a esta petición.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>El Flujo de Trabajo</h3>
+<p>Como desarrollador, tú no creas los discos duros físicos. Tú creas un <strong>PVC</strong> pidiendo espacio. Luego, configuras tu Pod para que use ese PVC.</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml"># 1. Creamos el ticket pidiendo almacenamiento (PVC)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: reclamo-datos-mysql
+spec:
+  accessModes:
+    - ReadWriteOnce # Solo un Pod puede escribir en este disco a la vez
+  resources:
+    requests:
+      storage: 10Gi # ¡Queremos 10 Gigabytes!</code></pre>
+</div>
+
+<p>Una vez que Kubernetes aprueba ese reclamo y le asigna almacenamiento real, le decimos al Pod que lo use:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml"># 2. Fragmento del Pod usando el PVC
+    spec:
+      containers:
+      - name: mysql-db
+        image: mysql:8.0
+        volumeMounts:
+        - mountPath: /var/lib/mysql # Aquí es donde MySQL guarda los datos internos
+          name: mi-almacenamiento
+      volumes:
+      - name: mi-almacenamiento
+        persistentVolumeClaim:
+          claimName: reclamo-datos-mysql # Conectamos el volumen al PVC que creamos antes</code></pre>
+</div>
+<span class="center-horizontal caption">Si este Pod muere, el nuevo Pod que nazca se conectará de nuevo al PVC 'reclamo-datos-mysql' y montará el disco. Todos los datos seguirán allí intactos.</span>
+
+<h2>3. StorageClasses (Aprovisionamiento Dinámico)</h2>
+<p>En clústeres modernos o en la nube, ni siquiera hace falta que el administrador cree los PV (discos físicos) por adelantado. Entra en juego la <strong>StorageClass</strong>.</p>
+<p>Si envías un PVC a Kubernetes pidiendo 10GB, y tienes una StorageClass configurada (por ejemplo en AWS), Kubernetes automáticamente llama a la API de Amazon, compra un disco de 10GB por ti en milisegundos, crea el PV, y lo conecta a tu PVC. Magia pura de la automatización nativa de la nube (Cloud Native).</p>

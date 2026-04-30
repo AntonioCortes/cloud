@@ -1,0 +1,93 @@
+<h1 class="title">Deployments: La Verdadera Magia de Kubernetes</h1>
+
+<p>En la sección anterior vimos que los Pods son la unidad fundamental de ejecución. Sin embargo, también vimos su mayor debilidad: son mortales. Si un Pod muere, se queda muerto. Para solucionar esto y lograr la alta disponibilidad, no interactuamos directamente con los Pods en producción, sino que usamos <strong>Deployments</strong> (Despliegues).</p>
+
+<h2>1. ¿Qué es un Deployment?</h2>
+<p>Un Deployment es un objeto de nivel superior que actúa como un "gestor" o "supervisor" de tus Pods. Le dices al Deployment cuál es el estado que deseas alcanzar, y él se encarga de crear, actualizar o eliminar Pods para que la realidad coincida exactamente con tu deseo.</p>
+
+<p>Bajo el capó, un Deployment no gestiona los Pods directamente, sino que crea otro objeto intermedio llamado <strong>ReplicaSet</strong>. El ReplicaSet es quien garantiza que siempre haya un número exacto de Pods corriendo. Por ejemplo, si le pides 3 réplicas, el ReplicaSet vigila 24/7; si uno muere, arranca otro inmediatamente.</p>
+
+<h2>2. Ventajas clave de usar Deployments</h2>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Característica</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Auto-sanación</strong></td>
+            <td>Si el servidor (Nodo) donde viven tus Pods se incendia, el Deployment detectará la pérdida y recreará esos Pods en otro servidor sano automáticamente.</td>
+        </tr>
+        <tr>
+            <td><strong>Escalabilidad Inmediata</strong></td>
+            <td>Si tienes mucho tráfico, puedes pasar de 2 a 50 Pods con un solo comando. El Deployment creará las réplicas necesarias en segundos.</td>
+        </tr>
+        <tr>
+            <td><strong>Rolling Updates (Cero Caídas)</strong></td>
+            <td>Cuando actualizas la versión de tu app (ej: de la v1.0 a la v2.0), el Deployment no apaga los 50 Pods viejos de golpe. Apaga 5, arranca 5 nuevos, verifica que funcionan, y repite el proceso hasta actualizar todos sin que el usuario note un corte en el servicio.</td>
+        </tr>
+        <tr>
+            <td><strong>Rollbacks Sencillos</strong></td>
+            <td>Si la versión v2.0 que acabas de subir tiene un error fatal, puedes ordenarle al Deployment que vuelva inmediatamente al estado de la v1.0, manteniendo un historial de revisiones.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. Creando un Deployment</h2>
+<p>La anatomía de un archivo YAML de un Deployment es básicamente la de un Pod, pero envuelta en las reglas de las réplicas. Observa este ejemplo:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-yaml"># archivo: mi-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-backend
+spec:
+  replicas: 3 # ¡Aquí pedimos la alta disponibilidad!
+  selector:
+    matchLabels:
+      app: backend
+  template: # --- A partir de aquí, es exactamente la definición de un Pod ---
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: api-nodejs
+        image: miorganizacion/api:v1.0
+        ports:
+        - containerPort: 3000</code></pre>
+</div>
+<span class="center-horizontal caption">Nota cómo usamos las 'labels' (etiquetas). El Deployment usa el 'selector' para saber qué Pods le pertenecen. Buscará todos los Pods que tengan la etiqueta 'app: backend' para contarlos y gestionarlos.</span>
+
+<h2>4. Comandos del Día a Día con Deployments</h2>
+<p>El flujo de trabajo habitual de un desarrollador o ingeniero DevOps utilizando Deployments se ve así:</p>
+
+<div class="center-horizontal">
+<pre><code class="language-bash"># 1. Crear el Deployment basado en el archivo YAML
+kubectl apply -f mi-deployment.yaml
+
+# 2. Ver el estado de nuestros Deployments
+kubectl get deployments
+
+# Verás algo como:
+# NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+# app-backend   3/3     3            3           2m
+
+# 3. Listar los Pods (verás que Kubernetes ha creado 3 automáticamente)
+kubectl get pods
+
+# 4. ¡ESCALAR! Aumentar a 10 réplicas porque hubo un pico de tráfico
+kubectl scale deployment app-backend --replicas=10
+
+# 5. ACTUALIZAR VERSIÓN: Cambiar la imagen a la v2.0 (Rolling update)
+kubectl set image deployment/app-backend api-nodejs=miorganizacion/api:v2.0
+
+# 6. ROLLBACK: La v2.0 falló, volver a la versión anterior rápidamente
+kubectl rollout undo deployment/app-backend</code></pre>
+</div>
+
+<h2>5. Conclusión</h2>
+<p>La regla de oro en Kubernetes es: <strong>Nunca crees un Pod directamente. Crea siempre un Deployment.</strong> Incluso si solo necesitas una (1) sola réplica de tu base de datos o aplicación, el Deployment te garantiza que esa única réplica se mantendrá viva ante cualquier desastre.</p>
